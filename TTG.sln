@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTG-Game", "TTG-Game\TTG-Game.csproj", "{0BF280FD-4B62-44CA-BA03-B035C9DF86F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTG-Server", "TTG-Server\TTG-Server.csproj", "{0A4E96A7-1065-4BE9-B8A3-16940A598657}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BF280FD-4B62-44CA-BA03-B035C9DF86F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BF280FD-4B62-44CA-BA03-B035C9DF86F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BF280FD-4B62-44CA-BA03-B035C9DF86F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BF280FD-4B62-44CA-BA03-B035C9DF86F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A4E96A7-1065-4BE9-B8A3-16940A598657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A4E96A7-1065-4BE9-B8A3-16940A598657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A4E96A7-1065-4BE9-B8A3-16940A598657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A4E96A7-1065-4BE9-B8A3-16940A598657}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
