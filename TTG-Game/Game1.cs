@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TTG_Shared;
 
 namespace TTG_Game;
 
@@ -16,8 +17,7 @@ public class Game1 : Game {
     }
 
     protected override void Initialize() {
-        // TODO: Add your initialization logic here
-        Window.Title = $"The Traitor's Gambit";
+        Window.Title = $"The Traitor's Gambit v{GitInformation.Version} ({GitInformation.ShortSha})";
 
         base.Initialize();
     }

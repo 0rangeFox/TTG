@@ -8,4 +8,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TTG-Shared\TTG-Shared.csproj" />
+    </ItemGroup>
+
 </Project>
