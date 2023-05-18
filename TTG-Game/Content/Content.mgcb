@@ -13,3 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/AmongUs.spritefont
+#/importer:FontDescriptionImporter
+#/processor:FontDescriptionProcessor
+#/processorParam:PremultiplyAlpha=True
+#/processorParam:TextureFormat=Compressed
+#/build:Fonts/AmongUs.spritefont

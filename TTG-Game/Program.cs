@@ -1,2 +1,2 @@
-﻿using var game = new TTG_Game.Game1();
+﻿using var game = new TTG_Game.TTGGame();
 game.Run();
