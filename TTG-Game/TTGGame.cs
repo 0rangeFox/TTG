@@ -16,4 +16,14 @@ public class TTGGame : Game {
         Instance.Initialize();
     }
 
+    protected override void Update(GameTime gameTime) {
+        Instance.Scene.Update(gameTime);
+        base.Update(gameTime);
+    }
+
+    protected override void Draw(GameTime gameTime) {
+        Instance.Scene.Draw(gameTime);
+        base.Draw(gameTime);
+    }
+
 }
