@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework;
+using TTG_Game.Controls;
 
-namespace TTG_Game.Models; 
+namespace TTG_Game.Models;
 
-public class Scene : IDrawableComponent {
+public class Scene : DrawableComponent {
 
-    public virtual void Update(GameTime gameTime) {}
-    public virtual void Draw(GameTime gameTime) {}
+    public Camera? Camera { get; protected set; } = null;
 
 }

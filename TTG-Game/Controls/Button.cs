@@ -8,7 +8,7 @@ namespace TTG_Game.Controls;
 
 
 // Credits of original code: https://github.com/Oyyou/MonoGame_Tutorials/blob/master/MonoGame_Tutorials/Tutorial012/Controls/Button.cs
-public class Button : IDrawableComponent
+public class Button : DrawableComponent
 {
     #region Fields
 
@@ -21,8 +21,6 @@ public class Button : IDrawableComponent
     private MouseState _previousMouse;
 
     private Texture2D _texture;
-
-    private readonly SpriteBatch _spriteBatch = new(TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice);
 
     #endregion
 
@@ -59,27 +57,25 @@ public class Button : IDrawableComponent
         PenColour = Color.Black;
     }
 
-    public void Draw(GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         var colour = Color.White;
 
         if (_isHovering)
             colour = Color.Gray;
 
-        _spriteBatch.Begin();
-        _spriteBatch.Draw(_texture, Rectangle, colour);
+        spriteBatch.Draw(_texture, Rectangle, colour);
 
         if(!string.IsNullOrEmpty(Text))
         {
             var x = (Rectangle.X + (Rectangle.Width / 2)) - (_font.MeasureString(Text).X / 2);
             var y = (Rectangle.Y + (Rectangle.Height / 2)) - (_font.MeasureString(Text).Y / 2);
 
-            _spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour);
+            spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour);
         }
-        _spriteBatch.End();
     }
 
-    public void Update(GameTime gameTime)
+    public override void Update(GameTime gameTime)
     {
         _previousMouse = _currentMouse;
         _currentMouse = Mouse.GetState();

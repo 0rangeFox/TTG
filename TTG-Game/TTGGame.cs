@@ -22,8 +22,9 @@ public class TTGGame : Game {
     }
 
     protected override void Draw(GameTime gameTime) {
-        Instance.Scene.Draw(gameTime);
-        base.Draw(gameTime);
+        Instance.SpriteBatch.Begin(transformMatrix: Instance.Scene.Camera?.Transform);
+        Instance.Scene.Draw(Instance.SpriteBatch, gameTime);
+        Instance.SpriteBatch.End();
     }
 
 }
