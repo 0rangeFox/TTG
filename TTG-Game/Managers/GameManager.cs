@@ -11,6 +11,7 @@ public class GameManager {
     public readonly Game Game;
     public readonly GraphicsDeviceManager GraphicsDeviceManager;
     public readonly FontManager FontManager = new();
+    public readonly TextureManager TextureManager = new();
     public readonly NetworkManager NetworkManager = new();
 
     public Scene Scene;
@@ -26,6 +27,7 @@ public class GameManager {
         this.Game.IsMouseVisible = true;
 
         this.FontManager.Load();
+        this.TextureManager.Load();
 
         this.Scene = new MainScene();
     }
