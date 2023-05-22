@@ -9,11 +9,9 @@ namespace TTG_Game.Managers;
 
 public class GameManager {
 
-    public static int ScreenWidth;
-    public static int ScreenHeight;
-
     public readonly Game Game;
     public readonly GraphicsDeviceManager GraphicsDeviceManager;
+    public readonly GraphicManager GraphicManager;
     public SpriteBatch SpriteBatch;
 
     public readonly FontManager FontManager = new();
@@ -25,9 +23,7 @@ public class GameManager {
     public GameManager(Game game) {
         this.Game = game;
         this.GraphicsDeviceManager = new GraphicsDeviceManager(this.Game);
-
-        ScreenWidth = this.GraphicsDeviceManager.PreferredBackBufferWidth;
-        ScreenHeight = this.GraphicsDeviceManager.PreferredBackBufferHeight;
+        this.GraphicManager = new GraphicManager(this.GraphicsDeviceManager, new Vector2(3840, 2160));
     }
 
     public void Initialize() {
@@ -36,6 +32,7 @@ public class GameManager {
         this.Game.IsMouseVisible = true;
 
         this.SpriteBatch = new SpriteBatch(this.GraphicsDeviceManager.GraphicsDevice);
+        this.GraphicManager.Update();
 
         this.FontManager.Load();
         this.TextureManager.Load();
