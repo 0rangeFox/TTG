@@ -67,6 +67,9 @@ public class Player : AnimatedEntity {
             } else this._selectingNearbyEntity = null;
         }
 
+        if (this._selectingNearbyEntity != null && KeyboardUtil.IsGoingDown(Keys.E))
+            this._selectingNearbyEntity.ExecuteAction();
+
         if (Keyboard.GetState().IsKeyDown(Keys.W))
             this._velocity.Y = -Speed;
         else if (Keyboard.GetState().IsKeyDown(Keys.S))
