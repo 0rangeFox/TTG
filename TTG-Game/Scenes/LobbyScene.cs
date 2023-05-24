@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Controls;
 using TTG_Game.Models;
 
@@ -14,6 +13,8 @@ public class LobbyScene : Scene {
     public LobbyScene() {
         this.Camera = new Camera();
         this._players.Add(new Player("0rangeFox", Color.Orange));
+
+        this._deadBody.IsHighlighted = true;
     }
 
     public override void Update(GameTime gameTime) {
@@ -23,13 +24,13 @@ public class LobbyScene : Scene {
         this.Camera!.Follow(this._players[0]);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
+    public override void Draw(GameTime gameTime) {
         TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.OrangeRed);
 
-        this._deadBody.Draw(spriteBatch, gameTime);
+        this._deadBody.Draw(gameTime);
 
         foreach (var player in this._players)
-            player.Draw(spriteBatch, gameTime);
+            player.Draw(gameTime);
     }
 
 }

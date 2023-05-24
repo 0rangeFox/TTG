@@ -36,10 +36,10 @@ public class MainScene : Scene {
         this._quitButton.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
+    public override void Draw(GameTime gameTime) {
         TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.CornflowerBlue);
-        this._playButton.Draw(spriteBatch, gameTime);
-        this._quitButton.Draw(spriteBatch, gameTime);
+        this._playButton.Draw(gameTime);
+        this._quitButton.Draw(gameTime);
     }
 
 }

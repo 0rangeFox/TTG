@@ -22,6 +22,8 @@ public class Button : DrawableComponent
 
     private Texture2D _texture;
 
+    private SpriteBatch _spriteBatch = TTGGame.Instance.SpriteBatch;
+
     #endregion
 
     #region Properties
@@ -57,21 +59,21 @@ public class Button : DrawableComponent
         PenColour = Color.Black;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(GameTime gameTime)
     {
         var colour = Color.White;
 
         if (_isHovering)
             colour = Color.Gray;
 
-        spriteBatch.Draw(_texture, Rectangle, colour);
+        this._spriteBatch.Draw(_texture, Rectangle, colour);
 
         if(!string.IsNullOrEmpty(Text))
         {
             var x = (Rectangle.X + (Rectangle.Width / 2)) - (_font.MeasureString(Text).X / 2);
             var y = (Rectangle.Y + (Rectangle.Height / 2)) - (_font.MeasureString(Text).Y / 2);
 
-            spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour);
+            this._spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour);
         }
     }
 

@@ -13,16 +13,24 @@ public class TextureManager {
     private List<Texture2D> _characterWalk;
     private Texture2D _characterDead;
 
+    private Effect _highlightEffect;
+
     public Texture2D CharacterIdle => this._characterIdle.Clone();
     public List<Texture2D> CharacterWalk => this._characterWalk.Select(texture => texture.Clone()).ToList();
     public Texture2D CharacterDead => this._characterDead.Clone();
 
-    public void Load() {
-        Empty = new Texture2D(TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice, 1, 1);
+    public Effect HighlightEffect => this._highlightEffect.Clone();
 
-        this._characterIdle = TTGGame.Instance.Load<Texture2D>("Images/Character/0");
-        this._characterWalk = Enumerable.Range(1, 5).Select(n => TTGGame.Instance.Load<Texture2D>($"Images/Character/{n}")).ToList();
-        this._characterDead = TTGGame.Instance.Load<Texture2D>("Images/Character/6");
+    public void Load() {
+        var game = TTGGame.Instance;
+
+        Empty = new Texture2D(game.GraphicsDeviceManager.GraphicsDevice, 1, 1);
+
+        this._characterIdle = game.Load<Texture2D>("Images/Character/0");
+        this._characterWalk = Enumerable.Range(1, 5).Select(n => game.Load<Texture2D>($"Images/Character/{n}")).ToList();
+        this._characterDead = game.Load<Texture2D>("Images/Character/6");
+
+        this._highlightEffect = game.Load<Effect>("Shaders/Highlight");
     }
 
 }
