@@ -13,14 +13,14 @@ public class MainScene : Scene {
     private readonly Button _quitButton;
 
     public MainScene() {
-        this._playButton = new Button(this._buttonTexture, TTGGame.Instance.FontManager.AmongUs) {
+        this._playButton = new Button(this._buttonTexture, TTGGame.Instance.FontManager.AmongUs24px) {
             Position = new Vector2(250, 200),
             Text = "Play"
         };
 
         this._playButton.Click += PlayButton_Click;
 
-        this._quitButton = new Button(this._buttonTexture, TTGGame.Instance.FontManager.AmongUs) {
+        this._quitButton = new Button(this._buttonTexture, TTGGame.Instance.FontManager.AmongUs24px) {
             Position = new Vector2(250, 250),
             Text = "Quit"
         };

@@ -13,13 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-##begin Fonts/AmongUs.spritefont
-#/importer:FontDescriptionImporter
-#/processor:FontDescriptionProcessor
-#/processorParam:PremultiplyAlpha=True
-#/processorParam:TextureFormat=Compressed
-#/build:Fonts/AmongUs.spritefont
-#
 ##begin Controls/Button.png
 #/importer:TextureImporter
 #/processor:TextureProcessor
@@ -31,6 +24,32 @@
 #/processorParam:MakeSquare=False
 #/processorParam:TextureFormat=Color
 #/build:Controls/Button.png
+#
+##begin Fonts/AmongUs-128px.spritefont
+#/importer:FontDescriptionImporter
+#/processor:FontDescriptionProcessor
+#/processorParam:PremultiplyAlpha=True
+#/processorParam:TextureFormat=Compressed
+#/build:Fonts/AmongUs-128px.spritefont
+#
+##begin Fonts/AmongUs-24px.spritefont
+#/importer:FontDescriptionImporter
+#/processor:FontDescriptionProcessor
+#/processorParam:PremultiplyAlpha=True
+#/processorParam:TextureFormat=Compressed
+#/build:Fonts/AmongUs-24px.spritefont
+#
+##begin Images/Actions/Report.png
+#/importer:TextureImporter
+#/processor:TextureProcessor
+#/processorParam:ColorKeyColor=255,0,255,255
+#/processorParam:ColorKeyEnabled=True
+#/processorParam:GenerateMipmaps=False
+#/processorParam:PremultiplyAlpha=True
+#/processorParam:ResizeToPowerOfTwo=False
+#/processorParam:MakeSquare=False
+#/processorParam:TextureFormat=Color
+#/build:Images/Actions/Report.png
 #
 ##begin Images/Character/0.png
 #/importer:TextureImporter

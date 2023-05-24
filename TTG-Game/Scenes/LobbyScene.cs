@@ -9,12 +9,13 @@ public class LobbyScene : Scene {
 
     private readonly List<Player> _players = new();
     private readonly Entity _deadBody = new(TTGGame.Instance.TextureManager.CharacterDead);
+    private readonly Entity _deadBody1 = new(TTGGame.Instance.TextureManager.CharacterDead);
 
     public LobbyScene() {
         this.Camera = new Camera();
         this._players.Add(new Player("0rangeFox", Color.Orange));
 
-        this._deadBody.Highlight = true;
+        this._deadBody1.Position = new Vector2(500f);
     }
 
     public override void Update(GameTime gameTime) {
@@ -28,6 +29,7 @@ public class LobbyScene : Scene {
         TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.OrangeRed);
 
         this._deadBody.Draw(gameTime);
+        this._deadBody1.Draw(gameTime);
 
         foreach (var player in this._players)
             player.Draw(gameTime);

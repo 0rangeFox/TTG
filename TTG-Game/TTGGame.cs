@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Managers;
+using TTG_Game.Utils;
 
 namespace TTG_Game;
 
@@ -18,11 +18,12 @@ public class TTGGame : Game {
     }
 
     protected override void Update(GameTime gameTime) {
+        KeyboardUtil.Update(gameTime);
         Instance.Scene.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime) {
-        Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, transformMatrix: Instance.Scene.Camera?.Transform);
+        Instance.SpriteBatch.Begin(transformMatrix: Instance.Scene.Camera?.Transform);
         Instance.Scene.Draw(gameTime);
         Instance.SpriteBatch.End();
     }

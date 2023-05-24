@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TTG_Game.Managers;
+using TTG_Game.Utils;
 
 namespace TTG_Game.Models; 
 
@@ -16,6 +17,7 @@ public class Player : AnimatedEntity {
     private bool _isNetwork;
 
     private Vector2 _velocity = Vector2.Zero;
+    private IEntity? _selectingNearbyEntity;
 
     public Player(string nickname, Color color, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
         this.Nickname = nickname;
@@ -24,6 +26,12 @@ public class Player : AnimatedEntity {
 
         this.Texture = this._character.Idle;
         this.Textures = this._character.Walk;
+    }
+
+    private Vector2 GenerateTextCenterCoords(SpriteFont font, string text) {
+        var centerX = this.Position.X + (this.Texture.Width - font.MeasureString(text).X) / 2;
+        var centerY = this.Position.Y + (this.Texture.Height - font.MeasureString(text).Y) / 2;
+        return new Vector2(centerX, centerY);
     }
 
     private void CheckNearbyEntities() {
@@ -38,12 +46,27 @@ public class Player : AnimatedEntity {
 
             if (distance <= DetectionRadius) {
                 nearbyEntities.Add(entity);
-                entity.Highlight = true;
-            } else entity.Highlight = false;
+
+                this._selectingNearbyEntity ??= entity;
+                entity.Highlight = entity == this._selectingNearbyEntity;
+            } else if (entity == this._selectingNearbyEntity) {
+                this._selectingNearbyEntity = null;
+                entity.Highlight = false;
+            }
         }
     }
 
     private void CheckKeyboard() {
+        if (KeyboardUtil.IsGoingDown(Keys.Tab)) {
+            var nearbyEntities = TTGGame.Instance.NearbyEntities;
+            if (nearbyEntities.Count > 0) {
+                if (this._selectingNearbyEntity != null && nearbyEntities.Contains(this._selectingNearbyEntity)) {
+                    var nextIndex = (nearbyEntities.IndexOf(this._selectingNearbyEntity) + 1) % nearbyEntities.Count;
+                    this._selectingNearbyEntity = nearbyEntities[nextIndex];
+                } else this._selectingNearbyEntity = nearbyEntities[0];
+            } else this._selectingNearbyEntity = null;
+        }
+
         if (Keyboard.GetState().IsKeyDown(Keys.W))
             this._velocity.Y = -Speed;
         else if (Keyboard.GetState().IsKeyDown(Keys.S))
@@ -62,16 +85,47 @@ public class Player : AnimatedEntity {
         }
     }
 
+    private void DrawSelectedNearbyEntity() {
+        if (this._selectingNearbyEntity == null) return;
+
+        var entity = (Sprite)TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
+        TTGGame.Instance.SpriteBatch.Draw(
+            TTGGame.Instance.TextureManager.Report,
+            entity.Position + new Vector2(entity.Rectangle.Width - 100, -100),
+            null,
+            Color.White,
+            0f,
+            Vector2.Zero,
+            new Vector2(2.5f),
+            SpriteEffects.None,
+            0
+        );
+    }
+
     public override void Update(GameTime gameTime) {
         if (_isNetwork) return;
 
-        this.CheckNearbyEntities();
         this.CheckKeyboard();
 
         this.Position += _velocity;
         this._velocity = Vector2.Zero;
 
+        this.CheckNearbyEntities();
+
         base.Update(gameTime);
+    }
+
+    public override void Draw(GameTime gameTime) {
+        TTGGame.Instance.SpriteBatch.DrawString(
+            TTGGame.Instance.FontManager.AmongUs128px,
+            this.Nickname,
+            this.GenerateTextCenterCoords(TTGGame.Instance.FontManager.AmongUs128px, this.Nickname) - new Vector2(0f, 325f),
+            Color.Blue
+        );
+
+        this.DrawSelectedNearbyEntity();
+
+        base.Draw(gameTime);
     }
 
 }
