@@ -19,7 +19,6 @@ public class TTGGame : Game {
 
     protected override void Update(GameTime gameTime) {
         Instance.Scene.Update(gameTime);
-        base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime) {

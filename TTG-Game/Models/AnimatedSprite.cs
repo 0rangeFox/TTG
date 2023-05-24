@@ -6,11 +6,12 @@ namespace TTG_Game.Models;
 
 public class AnimatedSprite : Sprite {
 
+    private const double Delay = .15f;
+
     protected List<Texture2D> Textures;
     private int _currentTexture;
 
     private bool _isPaused = true;
-    private double _delay = .15f;
     private double _timer;
 
     public AnimatedSprite(List<Texture2D> textures) : base(textures[0]) {
@@ -34,7 +35,7 @@ public class AnimatedSprite : Sprite {
         if (!this._isPaused) {
             this._timer += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (this._timer > this._delay) {
+            if (this._timer > Delay) {
                 this._currentTexture = (this._currentTexture + 1) % this.Textures.Count;
                 this._timer = 0f;
                 this.Texture = this.Textures[this._currentTexture];

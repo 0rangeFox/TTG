@@ -8,13 +8,13 @@ namespace TTG_Game.Scenes;
 public class LobbyScene : Scene {
 
     private readonly List<Player> _players = new();
-    private readonly Sprite _deadBody = new(TTGGame.Instance.TextureManager.CharacterDead);
+    private readonly Entity _deadBody = new(TTGGame.Instance.TextureManager.CharacterDead);
 
     public LobbyScene() {
         this.Camera = new Camera();
         this._players.Add(new Player("0rangeFox", Color.Orange));
 
-        this._deadBody.IsHighlighted = true;
+        this._deadBody.Highlight = true;
     }
 
     public override void Update(GameTime gameTime) {

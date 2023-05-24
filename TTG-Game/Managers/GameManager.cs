@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Models;
@@ -19,6 +20,9 @@ public class GameManager {
     public readonly NetworkManager NetworkManager = new();
 
     public Scene Scene;
+
+    public readonly List<IEntity> Entities = new();
+    public readonly List<IEntity> NearbyEntities = new();
 
     public GameManager(Game game) {
         this.Game = game;

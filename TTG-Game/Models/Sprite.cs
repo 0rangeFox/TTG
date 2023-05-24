@@ -10,8 +10,8 @@ public class Sprite : DrawableComponent {
 
     protected Texture2D Texture;
     protected bool IsFlipped = false;
+    protected bool IsHighlighted = false;
 
-    public bool IsHighlighted = false;
     public Vector2 Position { get; set; } = Vector2.Zero;
     public Rectangle Rectangle => new((int) this.Position.X, (int) this.Position.Y, this.Texture.Width, this.Texture.Height);
 
