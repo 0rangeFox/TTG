@@ -19,6 +19,7 @@ public class GameManager {
     public readonly TextureManager TextureManager = new();
     public readonly NetworkManager NetworkManager = new();
 
+    public string Nickname;
     public Scene Scene;
 
     public readonly List<IEntity> Entities = new();
@@ -41,6 +42,7 @@ public class GameManager {
         this.FontManager.Load();
         this.TextureManager.Load();
 
+        this.Nickname = "0rangeFox";
         this.Scene = new MainScene();
     }
 

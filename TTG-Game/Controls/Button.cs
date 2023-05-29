@@ -2,99 +2,83 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using TTG_Game.Models;
+using TTG_Game.Utils.Extensions;
 
 namespace TTG_Game.Controls; 
 
-
 // Credits of original code: https://github.com/Oyyou/MonoGame_Tutorials/blob/master/MonoGame_Tutorials/Tutorial012/Controls/Button.cs
-public class Button : DrawableComponent
-{
+public class Button : Text {
+
     #region Fields
 
     private MouseState _currentMouse;
-
-    private SpriteFont _font;
-
+    private MouseState _previousMouse;
     private bool _isHovering;
 
-    private MouseState _previousMouse;
-
-    private Texture2D _texture;
-
-    private SpriteBatch _spriteBatch = TTGGame.Instance.SpriteBatch;
+    private readonly Texture2D _texture;
+    private Vector2 _position = Vector2.Zero;
 
     #endregion
 
     #region Properties
 
-    public event EventHandler Click;
+    public Color OnHoverColor { get; set; }
 
-    public bool Clicked { get; private set; }
+    public bool Centered { get; set; }
+    public new Vector2 Position {
+        get => this._position;
+        set {
+            this._position = value;
 
-    public Color PenColour { get; set; }
-
-    public Vector2 Position { get; set; }
-
-    public Rectangle Rectangle
-    {
-        get
-        {
-            return new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
+            var rectangle = this.Rectangle;
+            var x = (rectangle.X + (rectangle.Width / 2)) - (this.Font.MeasureString(this.String).X / 2);
+            var y = (rectangle.Y + (rectangle.Height / 2)) - (this.Font.MeasureString(this.String).Y / 2);
+            base.Position = new Vector2(x, y);
         }
     }
+    public Rectangle Rectangle => this.Centered ?
+        new Rectangle((int) ((TTGGame.Instance.GraphicManager.ScreenCenter.X - this._texture.Width / 2) + this._position.X), (int) ((TTGGame.Instance.GraphicManager.ScreenCenter.Y - this._texture.Height / 2) + this._position.Y), this._texture.Width, this._texture.Height) :
+        new Rectangle((int) this._position.X, (int) this._position.Y, this._texture.Width, this._texture.Height);
 
-    public string Text { get; set; }
-
+    public event EventHandler Click;
+    public bool Clicked { get; private set; }
     #endregion
 
     #region Methods
 
-    public Button(Texture2D texture, SpriteFont font)
-    {
-        _texture = texture;
+    public Button(string text) : this(TTGGame.Instance.TextureManager.Button, text) {}
 
-        _font = font;
+    public Button(Texture2D texture, string text) : base(text) {
+        this._texture = texture;
 
-        PenColour = Color.Black;
+        this.Color = Color.White;
+        this.OnHoverColor = this.Color.Darker(.75f);
     }
 
-    public override void Draw(GameTime gameTime)
-    {
-        var colour = Color.White;
+    public override void Update(GameTime gameTime) {
+        this._previousMouse = this._currentMouse;
+        this._currentMouse = Mouse.GetState();
 
-        if (_isHovering)
-            colour = Color.Gray;
+        var mouseRectangle = new Rectangle(this._currentMouse.X, this._currentMouse.Y, 1, 1);
 
-        this._spriteBatch.Draw(_texture, Rectangle, colour);
+        this._isHovering = false;
 
-        if(!string.IsNullOrEmpty(Text))
-        {
-            var x = (Rectangle.X + (Rectangle.Width / 2)) - (_font.MeasureString(Text).X / 2);
-            var y = (Rectangle.Y + (Rectangle.Height / 2)) - (_font.MeasureString(Text).Y / 2);
+        if (!mouseRectangle.Intersects(this.Rectangle)) return;
 
-            this._spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour);
-        }
+        this._isHovering = true;
+
+        this.Clicked = this._currentMouse.LeftButton == ButtonState.Released && this._previousMouse.LeftButton == ButtonState.Pressed;
+        if (this.Clicked) this.Click?.Invoke(this, EventArgs.Empty);
     }
 
-    public override void Update(GameTime gameTime)
-    {
-        _previousMouse = _currentMouse;
-        _currentMouse = Mouse.GetState();
+    public override void Draw(GameTime gameTime) {
+        this.SpriteBatch.Draw(
+            this._texture,
+            this.Rectangle,
+            this._isHovering ? this.OnHoverColor : this.Color
+        );
 
-        var mouseRectangle = new Rectangle(_currentMouse.X, _currentMouse.Y, 1, 1);
-
-        _isHovering = false;
-
-        if(mouseRectangle.Intersects(Rectangle))
-        {
-            _isHovering = true;
-
-            if(_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
-            {
-                Click?.Invoke(this, new EventArgs());
-            }
-        }
+        base.Draw(gameTime);
     }
 
     #endregion

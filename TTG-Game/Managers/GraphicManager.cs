@@ -10,6 +10,7 @@ public class GraphicManager {
 
     public int ScreenWidth;
     public int ScreenHeight;
+    public Vector2 ScreenCenter;
 
     /// <summary>
     /// The virtual screen size. Default is 1280x800. See the non-existent documentation on how this works.
@@ -44,6 +45,9 @@ public class GraphicManager {
         var device = TTGGame.Instance.GraphicsDeviceManager;
         this.ScreenWidth = device.PreferredBackBufferWidth;
         this.ScreenHeight = device.PreferredBackBufferHeight;
+
+        var viewport = device.GraphicsDevice.Viewport;
+        this.ScreenCenter = new Vector2(this.ScreenWidth / 2f, this.ScreenHeight / 2f);
 
         var widthScale = this.ScreenWidth / this.VirtualScreen.X;
         var heightScale = this.ScreenHeight / this.VirtualScreen.Y;

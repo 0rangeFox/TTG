@@ -13,7 +13,7 @@ public class LobbyScene : Scene {
 
     public LobbyScene() {
         this.Camera = new Camera();
-        this._players.Add(new Player("0rangeFox", Color.Orange));
+        this._players.Add(new Player(TTGGame.Instance.Nickname, Color.Orange));
 
         this._deadBody1.Position = new Vector2(500f);
     }
