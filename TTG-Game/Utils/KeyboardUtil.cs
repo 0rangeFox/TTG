@@ -27,7 +27,7 @@ public enum KeysState {
     GoingDown
 }
 
-public class KeyboardUtil {
+public static class KeyboardUtil {
 
     private static Dictionary<Keys, KeysState> _keyboardState = new();
     

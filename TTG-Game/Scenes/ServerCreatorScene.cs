@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using TTG_Game.Controls;
 using TTG_Game.Models;
+using TTG_Game.Utils;
 
 namespace TTG_Game.Scenes; 
 
@@ -52,7 +53,7 @@ public class ServerCreatorScene : SubScene {
         this._incrementMaxPlayersButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
             Position = this._maxPlayersText.Position + new Vector2(this._maxPlayersText.Measures.X + 20f, 15f),
             Scale = new Vector2(.25f, .85f),
-            Rotation = (float) (3 * Math.PI) / 2
+            Rotation = (float) ConverterUtil.DegreesToRadians(270)
         };
 
         this._incrementMaxPlayersButton.Click += this.IncrementMaxPlayers_Click;
@@ -60,7 +61,7 @@ public class ServerCreatorScene : SubScene {
         this._decrementMaxPlayersButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
             Position = this._incrementMaxPlayersButton.Position + new Vector2(this._incrementMaxPlayersButton.Rectangle.Width, 5f),
             Scale = new Vector2(.25f, .85f),
-            Rotation = (float) Math.PI / 2,
+            Rotation = (float) ConverterUtil.DegreesToRadians(90),
             Disabled = true
         };
 
@@ -73,7 +74,7 @@ public class ServerCreatorScene : SubScene {
         this._incrementMaxTraitorsButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
             Position = this._maxTraitorsText.Position + new Vector2(this._maxTraitorsText.Measures.X + 20f, 15f),
             Scale = new Vector2(.25f, .85f),
-            Rotation = (float) (3 * Math.PI) / 2
+            Rotation = (float) ConverterUtil.DegreesToRadians(270)
         };
 
         this._incrementMaxTraitorsButton.Click += this.IncrementMaxTraitors_Click;
@@ -81,7 +82,7 @@ public class ServerCreatorScene : SubScene {
         this._decrementMaxTraitorsButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
             Position = this._incrementMaxTraitorsButton.Position + new Vector2(this._incrementMaxTraitorsButton.Rectangle.Width, 5f),
             Scale = new Vector2(.25f, .85f),
-            Rotation = (float) Math.PI / 2,
+            Rotation = (float) ConverterUtil.DegreesToRadians(90),
             Disabled = true
         };
 
