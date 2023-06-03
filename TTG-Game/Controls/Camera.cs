@@ -6,7 +6,13 @@ namespace TTG_Game.Controls;
 // Credits of original code: https://github.com/Oyyou/MonoGame_Tutorials/blob/master/MonoGame_Tutorials/Tutorial014/Core/Camera.cs
 public class Camera {
 
+    #region Properties
+
     public Matrix Transform { get; private set; }
+
+    #endregion
+
+    #region Methods
 
     public void Follow(Sprite target) {
         var graphic = TTGGame.Instance.GraphicManager;
@@ -25,5 +31,7 @@ public class Camera {
 
         this.Transform = position * graphic.Scale * offset;
     }
+
+    #endregion
 
 }

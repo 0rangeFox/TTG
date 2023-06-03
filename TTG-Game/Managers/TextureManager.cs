@@ -19,6 +19,7 @@ public class TextureManager {
 
     public Texture2D Button { get; private set; }
     public Texture2D TextField { get; private set; }
+    public Texture2D ArrowRight { get; private set; }
 
     public Texture2D CharacterIdle => this._characterIdle.Clone();
     public List<Texture2D> CharacterWalk => this._characterWalk.Select(texture => texture.Clone()).ToList();
@@ -35,6 +36,7 @@ public class TextureManager {
 
         this.Button = game.Load<Texture2D>("Controls/Button");
         this.TextField = game.Load<Texture2D>("Controls/TextField");
+        this.ArrowRight = game.Load<Texture2D>("Controls/Arrow-Right");
 
         this._characterIdle = game.Load<Texture2D>("Images/Character/0");
         this._characterWalk = Enumerable.Range(1, 5).Select(n => game.Load<Texture2D>($"Images/Character/{n}")).ToList();

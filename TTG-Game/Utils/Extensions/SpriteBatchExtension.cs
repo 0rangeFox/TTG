@@ -67,5 +67,54 @@ public static class SpriteBatchExtension {
             layerDepth
         );
     }
+    
+    public static void DrawStringCenter(
+        this SpriteBatch spriteBatch,
+        SpriteFont spriteFont,
+        string text,
+        Vector2? position,
+        Color color
+    ) {
+        spriteBatch.DrawStringCenter(
+            spriteFont,
+            text,
+            position,
+            color,
+            0f,
+            null,
+            Vector2.One,
+            SpriteEffects.None,
+            0f,
+            false
+        );
+    }
+
+    public static void DrawStringCenter(
+        this SpriteBatch spriteBatch,
+        SpriteFont spriteFont,
+        string text,
+        Vector2? position,
+        Color color,
+        float rotation,
+        Vector2? origin,
+        Vector2 scale,
+        SpriteEffects effects,
+        float layerDepth,
+        bool rtl
+    ) {
+        var fontMeasures = spriteFont.MeasureString(text);
+        spriteBatch.DrawString(
+            spriteFont,
+            text,
+            TTGGame.Instance.GraphicManager.ScreenCenter + (position ?? Vector2.Zero),
+            color,
+            rotation,
+            origin ?? new Vector2(fontMeasures.X / 2f, fontMeasures.Y / 2f),
+            scale,
+            effects,
+            layerDepth,
+            rtl
+        );
+    }
 
 }

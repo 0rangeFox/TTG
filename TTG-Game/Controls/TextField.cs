@@ -8,25 +8,37 @@ namespace TTG_Game.Controls;
 
 public class TextField : Button {
 
+    #region Fields
+
     private readonly GameWindow _gw = TTGGame.Instance.Game.Window;
 
     private bool _isFocusing = false;
-    private readonly StringBuilder _text = new();
+    private readonly StringBuilder _text;
+
+    #endregion
+
+    #region Properties
 
     public event EventHandler Change;
 
     public new string String {
         get => base.String;
         set {
-            this._text.Clear();
-            this._text.Append(value);
             base.String = value;
+            this._text.Clear();
+            this._text.Append(base.String);
+            this.Position += Vector2.Zero; // Trigger to update the positions of string to be always centered of text field box.
         }
     }
 
-    public TextField(string text) : this(TTGGame.Instance.TextureManager.TextField, text) {}
+    #endregion
 
-    public TextField(Texture2D texture, string text) : base(texture, text) {
+    #region Methods
+
+    public TextField(string text = "") : this(TTGGame.Instance.TextureManager.TextField, text) {}
+
+    public TextField(Texture2D texture, string text = "") : base(texture, text) {
+        this._text = new StringBuilder(this.String);
         this.Click += CheckClickOnMyBox;
     }
 
@@ -46,9 +58,11 @@ public class TextField : Button {
     }
 
     private void CheckClickOnMyBox(object? sender, EventArgs e) {
-        if (!this.Clicked) return;
+        if (this.Disabled || !this.Clicked) return;
         if (this._isFocusing = !this._isFocusing) RegisterFocusedButtonForTextInput(OnInput);
         else UnRegisterFocusedButtonForTextInput(OnInput);
     }
+
+    #endregion
 
 }
