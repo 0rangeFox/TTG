@@ -34,7 +34,8 @@ public class Button : Text {
     public new Vector2 Position {
         get => this._position;
         set {
-            this._position = this.Centered ? new Vector2((TTGGame.Instance.GraphicManager.ScreenCenter.X - this._texture.Width * this.Scale.X / 2) + value.X, (TTGGame.Instance.GraphicManager.ScreenCenter.Y - this._texture.Height * this.Scale.Y / 2) + value.Y) : value;
+            if (!this._position.Equals(value))
+                this._position = this.Centered ? new Vector2((TTGGame.Instance.GraphicManager.ScreenCenter.X - this._texture.Width * this.Scale.X / 2) + value.X, (TTGGame.Instance.GraphicManager.ScreenCenter.Y - this._texture.Height * this.Scale.Y / 2) + value.Y) : value;
 
             var fontMeasures = this.Font.MeasureString(this.String);
             base.Position = new Vector2(
