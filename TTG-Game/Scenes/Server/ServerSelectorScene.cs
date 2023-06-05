@@ -57,20 +57,9 @@ public class ServerSelectorScene : SubScene {
 
     private readonly ServerDictionary _servers = new();
 
-    private SubScene? _subScene;
-
-    private static void BackButton_Click(object? sender, EventArgs e) => TTGGame.Instance.Scene = new MainScene();
     private void Nickname_Change(object? sender, EventArgs e) => TTGGame.Instance.Nickname = this._nicknameTextField.String;
 
-    private void SubScene_BackCB(object? sender, EventArgs e) => this._subScene = null;
-
-    private void ServerCreatorButton_Click(object? sender, EventArgs e) => this._subScene = new ServerCreatorScene() {
-        BackCallback = this.SubScene_BackCB
-    };
-
-    public ServerSelectorScene() {
-        this.BackCallback = BackButton_Click;
-
+    public ServerSelectorScene(EventHandler? createServerCallback) {
         this._titleScene = new Text("Server Selector") {
             Position = new Vector2((TTGGame.Instance.GraphicManager.ScreenWidth / 2) - 50f, 25f)
         };
@@ -79,7 +68,7 @@ public class ServerSelectorScene : SubScene {
             Position = new Vector2(TTGGame.Instance.GraphicManager.ScreenWidth - 200f, 5f),
         };
 
-        this._createServerButton.Click += ServerCreatorButton_Click;
+        this._createServerButton.Click += createServerCallback;
 
         this._nicknameText = new Text("Nickname") {
             Position = new Vector2(5f, TTGGame.Instance.GraphicManager.ScreenHeight - 45f)
@@ -135,22 +124,12 @@ public class ServerSelectorScene : SubScene {
     }
 
     public override void Update(GameTime gameTime) {
-        if (this._subScene != null) {
-            this._subScene.Update(gameTime);
-            return;
-        }
-
         base.Update(gameTime);
         this._nicknameTextField.Update(gameTime);
         this._createServerButton.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime) {
-        if (this._subScene != null) {
-            this._subScene.Draw(gameTime);
-            return;
-        }
-
         TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.Black);
 
         base.Draw(gameTime);

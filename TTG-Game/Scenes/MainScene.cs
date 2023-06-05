@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Controls;
 using TTG_Game.Models;
+using TTG_Game.Scenes.Server;
 using TTG_Game.Utils.Extensions;
 
 namespace TTG_Game.Scenes; 
@@ -14,7 +15,7 @@ public class MainScene : Scene {
     private readonly Button _playButton;
     private readonly Button _quitButton;
 
-    private static void PlayButton_Click(object? sender, EventArgs e) => TTGGame.Instance.Scene = new ServerSelectorScene();
+    private static void PlayButton_Click(object? sender, EventArgs e) => TTGGame.Instance.Scene = new ServerScene();
     private static void QuitButton_Click(object? sender, EventArgs e) => TTGGame.Instance.Game.Exit();
 
     public MainScene() {

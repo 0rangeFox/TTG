@@ -5,13 +5,13 @@ using TTG_Game.Models;
 
 namespace TTG_Game.Scenes; 
 
-public class LobbyScene : Scene {
+public class GameScene : Scene {
 
     private readonly List<Player> _players = new();
     private readonly Entity _deadBody = new(TTGGame.Instance.TextureManager.CharacterDead);
     private readonly Entity _deadBody1 = new(TTGGame.Instance.TextureManager.CharacterDead);
 
-    public LobbyScene() {
+    public GameScene() {
         this.Camera = new Camera();
         this._players.Add(new Player(TTGGame.Instance.Nickname, Color.Orange));
 

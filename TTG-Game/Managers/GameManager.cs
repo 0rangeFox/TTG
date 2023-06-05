@@ -17,7 +17,7 @@ public class GameManager {
 
     public readonly FontManager FontManager = new();
     public readonly TextureManager TextureManager = new();
-    public readonly NetworkManager NetworkManager = new();
+    public readonly NetworkManager NetworkManager = new("127.0.0.1", 7325);
 
     public string Nickname;
     public Scene Scene;
