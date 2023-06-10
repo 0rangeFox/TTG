@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Sockets;
 
 namespace TTG_Shared.Utils; 
 
@@ -11,13 +12,10 @@ public static class ConverterUtil {
     /// </summary>
     /// <param name="ip">The IP to be converted.</param>
     /// <returns>The IP in Big-Endian long.</returns>
-    public static long ConvertIpToBigEndian(IPAddress ip) {
-        var addressBytes = ip.GetAddressBytes();
-
-        if (BitConverter.IsLittleEndian)
-            Array.Reverse(addressBytes);
-
-        return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(addressBytes, 0));
-    }
+    public static long ConvertIpToBigEndian(IPAddress ip) => ip.AddressFamily switch {
+        AddressFamily.InterNetwork => BitConverter.ToUInt32(ip.GetAddressBytes(), 0),
+        AddressFamily.InterNetworkV6 => BitConverter.ToInt64(ip.GetAddressBytes(), 0),
+        _ => throw new ArgumentException("Unsupported IP address format.")
+    };
 
 }
