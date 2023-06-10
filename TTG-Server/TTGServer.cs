@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using TTG_Server.Managers;
 using TTG_Server.Models;
 using TTG_Shared;
-using TTG_Shared.Packets;
+using TTG_Shared.Utils;
 
 namespace TTG_Server;
 
@@ -13,6 +13,7 @@ public class TTGServer : IDisposable {
 
     public static TTGServer Instance { get; private set; } = null!;
 
+    public readonly ServerConfiguration Configuration;
     public readonly TaskManager TaskManager = new();
     public readonly NetworkManager NetworkManager;
 
@@ -20,10 +21,15 @@ public class TTGServer : IDisposable {
     public readonly Dictionary<Guid, TcpClient> ClientsHandshaking = new();
     public readonly Dictionary<Guid, Room> Rooms = new();
 
-    public TTGServer(string ip, ushort port) {
+    public TTGServer() {
         Instance = this;
 
-        this.NetworkManager = new NetworkManager(ip, port);
+        this.Configuration = ConfigurationUtil.Load(new ServerConfiguration {
+            IP = "127.0.0.1",
+            Port = 7325
+        });
+
+        this.NetworkManager = new NetworkManager(this.Configuration);
     }
 
     public void Run() {

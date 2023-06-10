@@ -22,8 +22,8 @@ public class NetworkManager : IDisposable {
 
     public Guid? ID => this._handshakePacket?.ClientID;
 
-    public NetworkManager(string ip, ushort port) {
-        var endPoint = new IPEndPoint(ConverterUtil.ConvertIpToBigEndian(ip), port);
+    public NetworkManager(GameConfiguration.NetworkConfiguration config) {
+        var endPoint = new IPEndPoint(ConverterUtil.ConvertIpToBigEndian(config.IP), config.Port);
 
         try {
             this._tcpClient.Connect(endPoint);

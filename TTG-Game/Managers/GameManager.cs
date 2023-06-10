@@ -8,6 +8,7 @@ using TTG_Game.Networking;
 using TTG_Game.Scenes;
 using TTG_Game.Utils;
 using TTG_Shared;
+using TTG_Shared.Utils;
 
 namespace TTG_Game.Managers; 
 
@@ -15,6 +16,7 @@ public class GameManager {
 
     private readonly ConcurrentQueue<Action> _actions = new();
 
+    public readonly GameConfiguration Configuration;
     public readonly Game Game;
     public readonly GraphicsDeviceManager GraphicsDeviceManager;
     public readonly GraphicManager GraphicManager;
@@ -22,7 +24,7 @@ public class GameManager {
 
     public readonly FontManager FontManager = new();
     public readonly TextureManager TextureManager = new();
-    public readonly NetworkManager NetworkManager = new("127.0.0.1", 7325);
+    public readonly NetworkManager NetworkManager;
 
     public string Nickname;
     public Scene Scene;
@@ -31,9 +33,18 @@ public class GameManager {
     public readonly List<IEntity> NearbyEntities = new();
 
     public GameManager(Game game) {
+        this.Configuration = ConfigurationUtil.Load(new GameConfiguration {
+            Nickname = "Player",
+            Network = new GameConfiguration.NetworkConfiguration() {
+                IP = "127.0.0.1",
+                Port = 7325
+            }
+        });
+
         this.Game = game;
         this.GraphicsDeviceManager = new GraphicsDeviceManager(this.Game);
         this.GraphicManager = new GraphicManager(this.GraphicsDeviceManager, new Vector2(3840, 2160));
+        this.NetworkManager = new NetworkManager(this.Configuration.Network);
     }
 
     public void RunOnMainThread(Action func) => this._actions.Enqueue(func);

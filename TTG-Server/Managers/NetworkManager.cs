@@ -18,9 +18,9 @@ public class NetworkManager : IDisposable {
 
     public UdpClient UDPClient => this._udpListener;
 
-    public NetworkManager(string ip, ushort port) {
-        this.IP = IPAddress.Parse(ip);
-        this.Port = port;
+    public NetworkManager(ServerConfiguration config) {
+        this.IP = IPAddress.Parse(config.IP);
+        this.Port = config.Port;
         this.EndPoint = new IPEndPoint(ConverterUtil.ConvertIpToBigEndian(this.IP), this.Port);
 
         this._tcpListener = new TcpListener(this.EndPoint);
