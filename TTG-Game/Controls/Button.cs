@@ -16,6 +16,7 @@ public class Button : Text {
     private bool _isHovering;
 
     private readonly Texture2D _texture;
+    private bool _isCentered = false;
     private Vector2 _position = Vector2.Zero;
     private Color _disabledColor;
 
@@ -23,19 +24,27 @@ public class Button : Text {
 
     #region Properties
 
-    public Vector2 Scale { get; set; } = Vector2.One;
+    public new Vector2 Origin { get; set; } = Vector2.Zero;
 
-    public SpriteEffects Effects { get; set; } = SpriteEffects.None;
+    public new Vector2 Scale { get; set; } = Vector2.One;
+
+    public new SpriteEffects Effects { get; set; } = SpriteEffects.None;
 
     public Color OnHoverColor { get; set; }
 
-    public bool Centered { get; set; }
+    public bool Centered {
+        get => this._isCentered;
+        set {
+            this._isCentered = value;
+            this._position = this._isCentered ? new Vector2(TTGGame.Instance.GraphicManager.ScreenCenter.X - this._texture.Width * this.Scale.X / 2, TTGGame.Instance.GraphicManager.ScreenCenter.Y - this._texture.Height * this.Scale.Y / 2) : Vector2.Zero;
+        }
+    }
 
     public new Vector2 Position {
         get => this._position;
         set {
             if (!this._position.Equals(value))
-                this._position = this.Centered ? new Vector2((TTGGame.Instance.GraphicManager.ScreenCenter.X - this._texture.Width * this.Scale.X / 2) + value.X, (TTGGame.Instance.GraphicManager.ScreenCenter.Y - this._texture.Height * this.Scale.Y / 2) + value.Y) : value;
+                this._position = this.Centered ? this._position + value : value;
 
             var fontMeasures = this.Font.MeasureString(this.String);
             base.Position = new Vector2(
@@ -112,10 +121,10 @@ public class Button : Text {
             null,
             this.Disabled ? this._disabledColor : this._isHovering ? this.OnHoverColor : this.Color,
             this.Rotation,
-            Vector2.Zero,
+            this.Origin,
             this.Scale,
             this.Effects,
-            0f
+            this.LayerDepth
         );
 
         base.Draw(gameTime);

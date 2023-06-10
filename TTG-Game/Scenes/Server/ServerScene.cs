@@ -1,10 +1,12 @@
 using System;
 using Microsoft.Xna.Framework;
 using TTG_Game.Models;
+using TTG_Shared.Models;
+using TTG_Shared.Packets;
 
 namespace TTG_Game.Scenes.Server; 
 
-public class ServerScene : Scene {
+public class ServerScene : Scene, INetworkScene {
 
     private SubScene _subScene;
 
@@ -22,6 +24,13 @@ public class ServerScene : Scene {
             ServerCreatorScene => new ServerSelectorScene(this.SwitchScene) { BackCallback = BackToMainMenu },
             _ => this._subScene
         };
+    }
+
+    public void PacketReceivedCallback(Packet packet) {
+        if (packet is JoinRoomResultPacket jrrp && jrrp.Joined)
+            TTGGame.Instance.RunOnMainThread(() => TTGGame.Instance.Scene = new GameScene(jrrp));
+        else if (this._subScene is INetworkScene subScene)
+            subScene.PacketReceivedCallback(packet);
     }
 
     public override void Update(GameTime gameTime) {

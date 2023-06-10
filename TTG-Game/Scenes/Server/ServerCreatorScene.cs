@@ -1,12 +1,16 @@
 using System;
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using TTG_Game.Controls;
 using TTG_Game.Models;
 using TTG_Game.Utils;
+using TTG_Game.Utils.Extensions;
+using TTG_Shared.Models;
+using TTG_Shared.Packets;
 
 namespace TTG_Game.Scenes; 
 
-public class ServerCreatorScene : SubScene {
+public class ServerCreatorScene : SubScene, INetworkScene {
 
     private const ushort MinPlayers = 4;
     private const ushort MaxPlayers = 16;
@@ -141,7 +145,21 @@ public class ServerCreatorScene : SubScene {
         this.CheckPlayersAndTraitorsValues();
     }
 
-    private void CreateServer_Click(object? sender, EventArgs e) => TTGGame.Instance.Scene = new GameScene();
+    private void ChangeStatusOfActions(bool status) {
+        this.BackButton.Disabled =
+            this._serverTextField.Disabled =
+                this._incrementPlayersButton.Disabled =
+                    this._decrementPlayersButton.Disabled =
+                        this._incrementTraitorsButton.Disabled =
+                            this._decrementTraitorsButton.Disabled =
+                                this._createServerButton.Disabled = status;
+    }
+
+    private void CreateServer_Click(object? sender, EventArgs e) {
+        this.ChangeStatusOfActions(true);
+
+        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Tcp, new CreateRoomPacket(TTGGame.Instance.Nickname, this._serverTextField.String, this._players, this._traitors));
+    }
 
     public override void Update(GameTime gameTime) {
         base.Update(gameTime);
@@ -171,6 +189,11 @@ public class ServerCreatorScene : SubScene {
         this._decrementTraitorsButton.Draw(gameTime);
 
         this._createServerButton.Draw(gameTime);
+    }
+
+    public void PacketReceivedCallback(Packet packet) {
+        if (packet is not CreatedRoomPacket { Created: true } crp) return;
+        TTGGame.Instance.RunOnMainThread(() => TTGGame.Instance.Scene = new GameScene((Guid) crp.ID, this._players, ColorExtension.GetFromSystemColor((System.Drawing.Color) crp.Color)));
     }
 
 }

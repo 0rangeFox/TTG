@@ -1,38 +1,54 @@
+using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using TTG_Game.Controls;
 using TTG_Game.Models;
+using TTG_Game.Utils.Extensions;
+using TTG_Shared.Models;
+using TTG_Shared.Packets;
 
 namespace TTG_Game.Scenes; 
 
-public class GameScene : Scene {
+public class GameScene : Scene, INetworkScene {
 
-    private readonly List<Player> _players = new();
-    private readonly Entity _deadBody = new(TTGGame.Instance.TextureManager.CharacterDead);
-    private readonly Entity _deadBody1 = new(TTGGame.Instance.TextureManager.CharacterDead);
+    private Guid _id;
+    private bool _isOwnerHost;
 
-    public GameScene() {
+    private readonly Dictionary<Guid, Player> _players;
+    private SubScene _scene;
+
+    public GameScene(Guid id, ushort maxPlayers, Color color, bool owner = true) {
+        this._id = id;
+        this._isOwnerHost = owner;
+        this._players = new Dictionary<Guid, Player>(maxPlayers) {
+            { (Guid) TTGGame.Instance.NetworkManager.ID, new Player(TTGGame.Instance.Nickname, color) }
+        };
+
         this.Camera = new Camera();
-        this._players.Add(new Player(TTGGame.Instance.Nickname, Color.Orange));
-
-        this._deadBody1.Position = new Vector2(500f);
+        this._scene = new LobbyScene(this._isOwnerHost, this._players, maxPlayers) {
+            Camera = this.Camera
+        };
     }
 
-    public override void Update(GameTime gameTime) {
-        foreach (var player in this._players)
-            player.Update(gameTime);
-
-        this.Camera!.Follow(this._players[0]);
+    public GameScene(JoinRoomResultPacket jrrp) : this((Guid) jrrp.ID, (ushort) jrrp.MaxPlayers, ColorExtension.GetFromSystemColor((System.Drawing.Color) jrrp.Color), false) {
+       TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new RequestRoomPlayersPacket()); 
     }
 
-    public override void Draw(GameTime gameTime) {
-        TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.OrangeRed);
+    public override void Update(GameTime gameTime) => this._scene.Update(gameTime);
 
-        this._deadBody.Draw(gameTime);
-        this._deadBody1.Draw(gameTime);
+    public override void Draw(GameTime gameTime) => this._scene.Draw(gameTime);
 
-        foreach (var player in this._players)
-            player.Draw(gameTime);
+    public void PacketReceivedCallback(Packet packet) {
+        switch (packet) {
+            case ConnectRoomPacket crp:
+                if (!this._players.ContainsKey(crp.ID))
+                    TTGGame.Instance.RunOnMainThread(() => this._players.Add(crp.ID, new Player(crp.Nickname, ColorExtension.GetFromSystemColor(crp.Color), true)));
+                break;
+            case DisconnectRoomPacket drp:
+                TTGGame.Instance.RunOnMainThread(() => this._players.Remove(drp.ID));
+                break;
+        }
     }
 
 }

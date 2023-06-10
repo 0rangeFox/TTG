@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using TTG_Game.Models;
 using TTG_Shared.Models;
 using TTG_Shared.Packets;
 using TTG_Shared.Utils;
@@ -19,6 +20,8 @@ public class NetworkManager : IDisposable {
     private readonly CancellationTokenSource _taskCancellationTokenSource = new();
     private readonly Task _task;
 
+    public Guid? ID => this._handshakePacket?.ClientID;
+
     public NetworkManager(string ip, ushort port) {
         var endPoint = new IPEndPoint(ConverterUtil.ConvertIpToBigEndian(ip), port);
 
@@ -34,27 +37,33 @@ public class NetworkManager : IDisposable {
 
             this._udpClient.Connect(endPoint);
             Console.WriteLine("Connected to the server via UDP and sending for handshake.");
-            this.SendPacketUDP(this._handshakePacket);
+            this.SendPacket(ProtocolType.Udp, this._handshakePacket);
             this._udpClient.BeginReceive(this.UDPMessageReceivedCallback, null);
 
-            this.SendPacketTCP(new TestPacket());
-            this.SendPacketUDP(new TestPacket());
+            this.SendPacket(ProtocolType.Tcp, new TestPacket());
+            this.SendPacket(ProtocolType.Udp, new TestPacket());
         } catch (Exception ex) {
             Console.WriteLine("Error occurred: " + ex.Message);
         }
     }
 
-    public void SendPacketTCP(Packet packet) {
+    public void SendPacket(ProtocolType protocol, Packet packet) {
         var packetBytes = packet.ToBytes();
-        this._tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
-    }
 
-    public void SendPacketUDP(Packet packet) {
-        var packetBytes = packet.ToBytes();
-        this._udpClient.Send(packetBytes, packetBytes.Length);
+        switch (protocol) {
+            case ProtocolType.Tcp:
+                this._tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
+                break;
+            case ProtocolType.Udp:
+                this._udpClient.Send(packetBytes, packetBytes.Length);
+                break;
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     private async Task TCPDataReceivedCallback() {
+        Packet? packet = null;
         try {
             var buffer = new byte[1024];
             var stream = this._tcpClient.GetStream();
@@ -65,13 +74,15 @@ public class NetworkManager : IDisposable {
                 if (bytesRead <= 0)
                     break; // Connection closed by the server
 
-                var packet = Packet.FromBytes(buffer[..bytesRead]);
+                packet = Packet.FromBytes(buffer[..bytesRead]);
 
                 if (packet is HandshakePacket hp)
                     this._handshakePacket = hp;
+                else if (TTGGame.Instance.Scene is INetworkScene scene)
+                    scene.PacketReceivedCallback(packet);
             }
         } catch (Exception ex) {
-            Console.WriteLine("Error occurred while handling TCP message: " + ex.Message);
+            Console.WriteLine($"Error occurred while handling TCP Packet ({packet}): " + ex.Message);
         }
     }
 
@@ -79,7 +90,8 @@ public class NetworkManager : IDisposable {
         IPEndPoint? serverEndPoint = null;
         var receivedBytes = this._udpClient.EndReceive(ar, ref serverEndPoint);
 
-        var packet = Packet.FromBytes(receivedBytes);
+        if (TTGGame.Instance.Scene is INetworkScene scene)
+            scene.PacketReceivedCallback(Packet.FromBytes(receivedBytes));
 
         // Continue receiving UDP messages
         this._udpClient.BeginReceive(this.UDPMessageReceivedCallback, null);

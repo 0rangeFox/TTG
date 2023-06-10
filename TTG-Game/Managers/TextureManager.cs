@@ -13,6 +13,8 @@ public class TextureManager {
     private List<Texture2D> _characterWalk;
     private Texture2D _characterDead;
 
+    private Texture2D _quit;
+    private Texture2D _start;
     private Texture2D _report;
 
     private Effect _highlightEffect;
@@ -25,6 +27,8 @@ public class TextureManager {
     public List<Texture2D> CharacterWalk => this._characterWalk.Select(texture => texture.Clone()).ToList();
     public Texture2D CharacterDead => this._characterDead.Clone();
 
+    public Texture2D Quit => this._quit.Clone();
+    public Texture2D Start => this._start.Clone();
     public Texture2D Report => this._report.Clone();
 
     public Effect HighlightEffect => this._highlightEffect.Clone();
@@ -42,6 +46,8 @@ public class TextureManager {
         this._characterWalk = Enumerable.Range(1, 5).Select(n => game.Load<Texture2D>($"Images/Character/{n}")).ToList();
         this._characterDead = game.Load<Texture2D>("Images/Character/6");
 
+        this._quit = game.Load<Texture2D>("Images/Actions/Quit");
+        this._start = game.Load<Texture2D>("Images/Actions/Start");
         this._report = game.Load<Texture2D>("Images/Actions/Report");
 
         this._highlightEffect = game.Load<Effect>("Shaders/Highlight");

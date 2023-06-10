@@ -13,7 +13,7 @@ public static class SpriteBatchExtension {
     ) {
         spriteBatch.DrawCenter(
             texture,
-            null, //new Vector2(destinationRectangle.X, destinationRectangle.Y),
+            null,
             destinationRectangle,
             color,
             0f,

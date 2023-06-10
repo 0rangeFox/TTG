@@ -16,6 +16,8 @@ public class NetworkManager : IDisposable {
     private readonly TcpListener _tcpListener;
     private readonly UdpClient _udpListener;
 
+    public UdpClient UDPClient => this._udpListener;
+
     public NetworkManager(string ip, ushort port) {
         this.IP = IPAddress.Parse(ip);
         this.Port = port;
@@ -47,7 +49,7 @@ public class NetworkManager : IDisposable {
         Console.WriteLine("New TCP client connected: {0}", tcpClient.Client.RemoteEndPoint);
 
         // Send handshake
-        var handshakePacket = new HandshakePacket(DateTime.Now, Guid.NewGuid());
+        var handshakePacket = new HandshakePacket(Guid.NewGuid(), DateTime.Now, Guid.NewGuid());
         var packetBytes = handshakePacket.ToBytes();
         tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
         TTGServer.Instance.ClientsHandshaking.Add(handshakePacket.Code, tcpClient);
@@ -66,7 +68,7 @@ public class NetworkManager : IDisposable {
         if (clientEndPoint != null) {
             var packet = Packet.FromBytes(receivedBytes);
             if (packet is HandshakePacket hp && TTGServer.Instance.ClientsHandshaking.TryGetValue(hp.Code, out var tcpClient)) {
-                new Client(tcpClient, clientEndPoint);
+                new Client(hp.ClientID, tcpClient, clientEndPoint);
                 TTGServer.Instance.ClientsHandshaking.Remove(hp.Code);
             } else if (TTGServer.Instance.Clients.TryGetValue(clientEndPoint, out var client))
                 client.ProcessPacket(ProtocolType.Udp, packet);

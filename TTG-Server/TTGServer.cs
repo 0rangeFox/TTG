@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using TTG_Server.Managers;
 using TTG_Server.Models;
 using TTG_Shared;
+using TTG_Shared.Packets;
 
 namespace TTG_Server;
 
@@ -17,6 +18,7 @@ public class TTGServer : IDisposable {
 
     public readonly Dictionary<IPEndPoint, Client> Clients = new();
     public readonly Dictionary<Guid, TcpClient> ClientsHandshaking = new();
+    public readonly Dictionary<Guid, Room> Rooms = new();
 
     public TTGServer(string ip, ushort port) {
         Instance = this;
@@ -37,10 +39,17 @@ public class TTGServer : IDisposable {
     private void ExecuteCommand(string? command) {
         switch (command?.ToLower()) {
             case "players":
-                Console.WriteLine($"There's {this.Clients.Count} clients connected to the server.");
+                Console.WriteLine($"There's {this.Clients.Count / 2} clients connected to the server.");
                 break;
             case "handshaking":
                 Console.WriteLine($"There's {this.ClientsHandshaking.Count} clients handshaking to the server.");
+                break;
+            case "rooms":
+                Console.WriteLine($"There's {this.Rooms.Count} rooms created.");
+
+                foreach (var room in this.Rooms.Values)
+                    Console.WriteLine($"Room ID: {room.ID} | Name: {room.Name} | Players: {room.Players.Count} / {room.MaxPlayers}");
+
                 break;
         }
     }

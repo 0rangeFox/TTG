@@ -4,6 +4,6 @@ namespace TTG_Game.Models;
 
 public class Scene : DrawableComponent {
 
-    public Camera? Camera { get; protected set; }
+    public Camera? Camera { get; set; }
 
 }
