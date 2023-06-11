@@ -49,8 +49,8 @@ public class GameScene : Scene, INetworkScene {
                 TTGGame.Instance.RunOnMainThread(() => this._players.Remove(drp.ID));
                 break;
             case PlayerMovementPacket pmp:
-                if (pmp.ID != null)
-                    this._players[(Guid) pmp.ID].UpdatePosition(pmp);
+                if (this._players.TryGetValue((Guid) pmp.ID, out var player))
+                    player.UpdatePosition(pmp);
                 break;
         }
     }

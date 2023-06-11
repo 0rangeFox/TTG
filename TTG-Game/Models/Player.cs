@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,9 +49,9 @@ public class Player : AnimatedEntity {
     private void SendUpdatedPositionPacket() => TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new PlayerMovementPacket(base.Position.ToNumerics(), (ushort) this.Texture.ID, this.IsFlipped));
 
     private Texture2D GetNetworkedTexture(Texture id) {
-        if (_character.Idle.ID.Equals(id)) return _character.Idle;
-        if (_character.Dead.ID.Equals(id)) return _character.Dead;
-        return _character.Walk.Find(texture => texture.ID.Equals(id));
+        if (this._character.Idle.ID.Equals(id)) return this._character.Idle;
+        if (this._character.Dead.ID.Equals(id)) return this._character.Dead;
+        return this._character.Walk.FirstOrDefault(texture => texture.ID.Equals(id)) ?? this._character.Idle;
     }
 
     public void UpdatePosition(PlayerMovementPacket packet) {
