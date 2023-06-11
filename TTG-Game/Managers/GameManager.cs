@@ -15,6 +15,7 @@ namespace TTG_Game.Managers;
 public class GameManager {
 
     private readonly ConcurrentQueue<Action> _actions = new();
+    private string _nickname = string.Empty;
 
     public readonly GameConfiguration Configuration;
     public readonly Game Game;
@@ -26,7 +27,14 @@ public class GameManager {
     public readonly TextureManager TextureManager = new();
     public readonly NetworkManager NetworkManager;
 
-    public string Nickname;
+    public string Nickname {
+        get => this._nickname;
+        set {
+            if (string.Equals(this._nickname, value, StringComparison.OrdinalIgnoreCase)) return;
+            this._nickname = this.Configuration.Nickname = value;
+            ConfigurationUtil.Save(this.Configuration);
+        }
+    }
     public Scene Scene;
 
     public readonly List<IEntity> Entities = new();
@@ -62,7 +70,7 @@ public class GameManager {
         this.FontManager.Load();
         this.TextureManager.Load();
 
-        this.Nickname = "0rangeFox";
+        this._nickname = this.Configuration.Nickname;
         this.Scene = new MainScene();
     }
 

@@ -50,8 +50,7 @@ public class NetworkManager : IDisposable {
 
         // Send handshake
         var handshakePacket = new HandshakePacket(Guid.NewGuid(), DateTime.Now, Guid.NewGuid());
-        var packetBytes = handshakePacket.ToBytes();
-        tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
+        tcpClient.GetStream().Write(handshakePacket.ToBytes());
         TTGServer.Instance.ClientsHandshaking.Add(handshakePacket.Code, tcpClient);
 
         // Continue accepting new TCP clients

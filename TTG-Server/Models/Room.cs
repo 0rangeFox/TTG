@@ -1,5 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Net.Sockets;
+using System.Numerics;
 using TTG_Shared.Packets;
 
 namespace TTG_Server.Models; 
@@ -46,9 +48,12 @@ public class Room {
         Console.WriteLine($"Created a room with ID: {this.ID}");
     }
 
-    public Room(Client owner, CreateRoomPacket packet) : this(new Player(owner, packet.Nickname, Color.Empty), packet.Name, packet.MaxPlayers, packet.MaxTraitors) {}
+    public Room(Client owner, CreateRoomPacket packet) : this(new Player(owner, packet.Nickname), packet.Name, packet.MaxPlayers, packet.MaxTraitors) {}
 
-    public Player? GetPlayerByClient(Client client) => this._players.FirstOrDefault(player => player.Client.Equals(client));
+    public bool GetPlayerByClient(Client client, [MaybeNullWhen(false)] out Player player) {
+        player = this._players.FirstOrDefault(player => player.Client.Equals(client));
+        return player != null;
+    }
 
     private Color GetRandomColor() {
         var random = new Random();
@@ -63,12 +68,28 @@ public class Room {
 
         return selectedColor;
     }
-    
+
+    private void FreeColor(Color color) {
+        int index;
+        for (index = 0; this._colors[index] != Color.Empty; index++) {}
+        this._colors[index] = color;
+    }
+
+    public void UpdatePosition(Client client, Vector2 position) {
+        if (!this.GetPlayerByClient(client, out var cPlayer)) return;
+        cPlayer.Position = position;
+
+        var movementPacket = new PlayerMovementPacket(cPlayer.Position, cPlayer.Client.ID);
+        foreach (var player in this._players)
+            if (!player.Client.Equals(cPlayer.Client))
+                player.Client.SendPacket(ProtocolType.Udp, movementPacket);
+    }
+
     public void AddPlayer(Client client, string nickname) {
         var newPlayer = new Player(client, nickname, this.GetRandomColor());
         client.SendPacket(ProtocolType.Tcp, new JoinRoomResultPacket(true, "", this.ID, this.MaxPlayers, newPlayer.Color));
 
-        var connectPacket = new ConnectRoomPacket(client.ID, newPlayer.Nickname, newPlayer.Color);
+        var connectPacket = new ConnectRoomPacket(client.ID, newPlayer.Nickname, newPlayer.Color, newPlayer.Position);
         foreach (var player in this._players)
             player.Client.SendPacket(ProtocolType.Udp, connectPacket);
 
@@ -76,7 +97,9 @@ public class Room {
     }
 
     public void RemovePlayer(Client client) {
-        if (!this._players.Remove(this.GetPlayerByClient(client))) return;
+        if (!this.GetPlayerByClient(client, out var cPlayer) || !this._players.Remove(cPlayer)) return;
+
+        this.FreeColor(cPlayer.Color);
 
         var disconnectPacket = new DisconnectRoomPacket(client.ID);
         foreach (var player in this._players)

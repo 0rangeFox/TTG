@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using TTG_Shared.Models;
@@ -17,7 +16,7 @@ public class Client {
     private readonly CancellationTokenSource _taskCancellationTokenSource = new();
     private Task _task;
 
-    public Room? Room => TTGServer.Instance.Rooms.Values.FirstOrDefault(room => room.GetPlayerByClient(this) != null);
+    public Room? Room => TTGServer.Instance.Rooms.Values.FirstOrDefault(room => room.GetPlayerByClient(this, out _));
 
     public Client(Guid clientID, TcpClient tcpClient, IPEndPoint udpipEndPoint) {
         this.ID = clientID;
@@ -70,7 +69,7 @@ public class Client {
                 break;
             case RequestRoomPlayersPacket:
                 foreach (var player in this.Room?.Players ?? Array.Empty<Player>())
-                    this.SendPacket(ProtocolType.Udp, new ConnectRoomPacket(player.Client.ID, player.Nickname, player.Color));
+                    this.SendPacket(ProtocolType.Udp, new ConnectRoomPacket(player.Client.ID, player.Nickname, player.Color, player.Position));
                 break;
             case CreateRoomPacket crp:
                 var newRoom = new Room(this, crp);
@@ -93,6 +92,9 @@ public class Client {
                 break;
             case LeaveRoomPacket lrp:
                 this.Room?.RemovePlayer(this);
+                break;
+            case PlayerMovementPacket pmp:
+                this.Room?.UpdatePosition(this, pmp.Position);
                 break;
         }
     }
@@ -124,6 +126,7 @@ public class Client {
                 if (bytesRead <= 0)
                     break; // Connection closed
 
+                // TODO Change this for TCP Buffer Coalescing
                 packet = Packet.FromBytes(buffer[..bytesRead]);
                 this.ProcessPacket(ProtocolType.Tcp, packet);
             }

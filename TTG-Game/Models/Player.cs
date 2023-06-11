@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TTG_Game.Managers;
 using TTG_Game.Utils;
+using TTG_Shared.Packets;
 
 namespace TTG_Game.Models; 
 
@@ -13,14 +15,27 @@ public class Player : AnimatedEntity {
     private const float Speed = 10f;
 
     public string Nickname;
+
+    public new Vector2 Position {
+        get => base.Position;
+        set {
+            if (base.Position.Equals(value)) return;
+            base.Position = value;
+
+            if (!this._isNetwork)
+                TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new PlayerMovementPacket(base.Position.ToNumerics()));
+        }
+    }
+
     private Character _character;
     private bool _isNetwork;
 
     private Vector2 _velocity = Vector2.Zero;
     private IEntity? _selectingNearbyEntity;
 
-    public Player(string nickname, Color color, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
+    public Player(string nickname, Color color, Vector2 position, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
         this.Nickname = nickname;
+        this.Position = position;
         this._character = new Character(color);
         this._isNetwork = isNetwork;
 
@@ -29,8 +44,9 @@ public class Player : AnimatedEntity {
     }
 
     private Vector2 GenerateTextCenterCoords(SpriteFont font, string text) {
-        var centerX = this.Position.X + (this.Texture.Width - font.MeasureString(text).X) / 2;
-        var centerY = this.Position.Y + (this.Texture.Height - font.MeasureString(text).Y) / 2;
+        var fontMeasures = font.MeasureString(text);
+        var centerX = this.Position.X + (this.Texture.Width - fontMeasures.X) / 2;
+        var centerY = this.Position.Y + (this.Texture.Height - fontMeasures.Y) / 2;
         return new Vector2(centerX, centerY);
     }
 
