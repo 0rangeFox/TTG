@@ -1,56 +1,47 @@
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using TTG_Game.Utils.Extensions;
+using TTG_Game.Models.Graphics;
+using XnaEffect = Microsoft.Xna.Framework.Graphics.Effect;
+using XnaTexture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
 
 namespace TTG_Game.Managers; 
 
 public class TextureManager {
 
-    public static Texture2D Empty;
+    public static Texture2D Empty = null!;
 
-    private Texture2D _characterIdle;
-    private List<Texture2D> _characterWalk;
-    private Texture2D _characterDead;
+    private readonly Dictionary<Texture, Texture2D> _textures = new();
+    private readonly Dictionary<Effect, XnaEffect> _effects = new();
 
-    private Texture2D _quit;
-    private Texture2D _start;
-    private Texture2D _report;
-
-    private Effect _highlightEffect;
-
-    public Texture2D Button { get; private set; }
-    public Texture2D TextField { get; private set; }
-    public Texture2D ArrowRight { get; private set; }
-
-    public Texture2D CharacterIdle => this._characterIdle.Clone();
-    public List<Texture2D> CharacterWalk => this._characterWalk.Select(texture => texture.Clone()).ToList();
-    public Texture2D CharacterDead => this._characterDead.Clone();
-
-    public Texture2D Quit => this._quit.Clone();
-    public Texture2D Start => this._start.Clone();
-    public Texture2D Report => this._report.Clone();
-
-    public Effect HighlightEffect => this._highlightEffect.Clone();
+    private void LoadTexture(Texture id, XnaTexture2D texture) => this._textures.Add(id, new Texture2D(id, texture));
 
     public void Load() {
         var game = TTGGame.Instance;
 
-        Empty = new Texture2D(game.GraphicsDeviceManager.GraphicsDevice, 1, 1);
+        Empty = new Texture2D(TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice, Texture.Empty, 1, 1);
+        this.LoadTexture(Texture.Logo, game.Load<XnaTexture2D>("Images/Logo"));
+        this.LoadTexture(Texture.Background, game.Load<XnaTexture2D>("Images/Background"));
 
-        this.Button = game.Load<Texture2D>("Controls/Button");
-        this.TextField = game.Load<Texture2D>("Controls/TextField");
-        this.ArrowRight = game.Load<Texture2D>("Controls/Arrow-Right");
+        this.LoadTexture(Texture.Button, game.Load<XnaTexture2D>("Controls/Button"));
+        this.LoadTexture(Texture.TextField, game.Load<XnaTexture2D>("Controls/TextField"));
+        this.LoadTexture(Texture.ArrowRight, game.Load<XnaTexture2D>("Controls/Arrow-Right"));
 
-        this._characterIdle = game.Load<Texture2D>("Images/Character/0");
-        this._characterWalk = Enumerable.Range(1, 5).Select(n => game.Load<Texture2D>($"Images/Character/{n}")).ToList();
-        this._characterDead = game.Load<Texture2D>("Images/Character/6");
+        this.LoadTexture(Texture.CharacterIdle, game.Load<XnaTexture2D>("Images/Character/0"));
+        this.LoadTexture(Texture.CharacterWalk0, game.Load<XnaTexture2D>("Images/Character/1"));
+        this.LoadTexture(Texture.CharacterWalk1, game.Load<XnaTexture2D>("Images/Character/2"));
+        this.LoadTexture(Texture.CharacterWalk2, game.Load<XnaTexture2D>("Images/Character/3"));
+        this.LoadTexture(Texture.CharacterWalk3, game.Load<XnaTexture2D>("Images/Character/4"));
+        this.LoadTexture(Texture.CharacterWalk4, game.Load<XnaTexture2D>("Images/Character/5"));
+        this.LoadTexture(Texture.CharacterDead, game.Load<XnaTexture2D>("Images/Character/6"));
 
-        this._quit = game.Load<Texture2D>("Images/Actions/Quit");
-        this._start = game.Load<Texture2D>("Images/Actions/Start");
-        this._report = game.Load<Texture2D>("Images/Actions/Report");
+        this.LoadTexture(Texture.Quit, game.Load<XnaTexture2D>("Images/Actions/Quit"));
+        this.LoadTexture(Texture.Start, game.Load<XnaTexture2D>("Images/Actions/Start"));
+        this.LoadTexture(Texture.Report, game.Load<XnaTexture2D>("Images/Actions/Report"));
 
-        this._highlightEffect = game.Load<Effect>("Shaders/Highlight");
+        this._effects.Add(Effect.Highlight, game.Load<XnaEffect>("Shaders/Highlight"));
     }
+
+    public Texture2D GetTexture(Texture id) => this._textures[id].Clone();
+
+    public XnaEffect GetEffect(Effect id) => this._effects[id].Clone();
 
 }

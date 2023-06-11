@@ -1,8 +1,8 @@
 using System;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TTG_Game.Models.Graphics;
 
 namespace TTG_Game.Controls; 
 
@@ -35,7 +35,7 @@ public class TextField : Button {
 
     #region Methods
 
-    public TextField(string text = "") : this(TTGGame.Instance.TextureManager.TextField, text) {}
+    public TextField(string text = "") : this(TTGGame.Instance.TextureManager.GetTexture(Texture.TextField), text) {}
 
     public TextField(Texture2D texture, string text = "") : base(texture, text) {
         this._text = new StringBuilder(this.String);

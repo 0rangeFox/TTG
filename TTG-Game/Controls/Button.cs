@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TTG_Game.Utils.Extensions;
+using Texture = TTG_Game.Models.Graphics.Texture;
+using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
 namespace TTG_Game.Controls; 
 
@@ -90,7 +92,7 @@ public class Button : Text {
 
     #region Methods
 
-    public Button(string text = "") : this(TTGGame.Instance.TextureManager.Button, text) {}
+    public Button(string text = "") : this(TTGGame.Instance.TextureManager.GetTexture(Texture.Button), text) {}
 
     public Button(Texture2D texture, string text = "") : base(text) {
         this._texture = texture;

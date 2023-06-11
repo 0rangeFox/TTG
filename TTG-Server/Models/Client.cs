@@ -94,7 +94,7 @@ public class Client {
                 this.Room?.RemovePlayer(this);
                 break;
             case PlayerMovementPacket pmp:
-                this.Room?.UpdatePosition(this, pmp.Position);
+                this.Room?.UpdatePosition(this, pmp);
                 break;
         }
     }

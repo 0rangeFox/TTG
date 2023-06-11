@@ -5,13 +5,15 @@ using TTG_Game.Controls;
 using TTG_Game.Models;
 using TTG_Game.Scenes.Server;
 using TTG_Game.Utils.Extensions;
+using Texture = TTG_Game.Models.Graphics.Texture;
+using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
 namespace TTG_Game.Scenes; 
 
 public class MainScene : Scene {
 
-    private readonly Texture2D _logo = TTGGame.Instance.Load<Texture2D>("Images/Logo");
-    private readonly Texture2D _background = TTGGame.Instance.Load<Texture2D>("Images/Background");
+    private readonly Texture2D _logo = TTGGame.Instance.TextureManager.GetTexture(Texture.Logo);
+    private readonly Texture2D _background = TTGGame.Instance.TextureManager.GetTexture(Texture.Background);
     private readonly Button _playButton;
     private readonly Button _quitButton;
 

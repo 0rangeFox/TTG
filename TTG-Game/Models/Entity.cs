@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework.Graphics;
+using TTG_Game.Models.Graphics;
 
 namespace TTG_Game.Models; 
 

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using TTG_Game.Controls;
 using TTG_Game.Models;
+using TTG_Game.Models.Graphics;
 using TTG_Game.Scenes.Server;
 using TTG_Shared.Packets;
 
@@ -25,7 +26,7 @@ public class LobbyScene : SubScene {
         this._players = players;
         this._maxPlayers = maxPlayers;
 
-        this._quitButton = new Button(TTGGame.Instance.TextureManager.Quit) {
+        this._quitButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.Quit)) {
             Static = true,
             Scale = new Vector2(.6f)
         };
@@ -33,7 +34,7 @@ public class LobbyScene : SubScene {
         this._quitButton.Click += this.OnQuitClick;
 
         if (this._isOwnerHost) {
-            this._startButton = new Button(TTGGame.Instance.TextureManager.Start) {
+            this._startButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.Start)) {
                 Static = true,
                 Centered = true,
                 Scale = new Vector2(.6f),

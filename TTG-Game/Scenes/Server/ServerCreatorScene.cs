@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using TTG_Game.Controls;
 using TTG_Game.Models;
+using TTG_Game.Models.Graphics;
 using TTG_Game.Utils;
 using TTG_Game.Utils.Extensions;
 using TTG_Shared.Models;
@@ -56,7 +57,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
             Position = this._serverText.Position - new Vector2(0f, -75f)
         };
 
-        this._incrementPlayersButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+        this._incrementPlayersButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
             Position = this._playersText.Position + new Vector2(this._playersText.Measures.X + 20f, 15f),
             Scale = new Vector2(.25f, .85f),
             Rotation = (float) ConverterUtil.DegreesToRadians(270)
@@ -64,7 +65,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
 
         this._incrementPlayersButton.Click += this.IncrementPlayersClick;
 
-        this._decrementPlayersButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+        this._decrementPlayersButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
             Position = this._incrementPlayersButton.Position + new Vector2(this._incrementPlayersButton.Rectangle.Width, 5f),
             Scale = new Vector2(.25f, .85f),
             Rotation = (float) ConverterUtil.DegreesToRadians(90),
@@ -77,7 +78,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
             Position = this._playersText.Position - new Vector2(0f, -75f)
         };
         
-        this._incrementTraitorsButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+        this._incrementTraitorsButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
             Position = this._maxTraitorsText.Position + new Vector2(this._maxTraitorsText.Measures.X + 20f, 15f),
             Scale = new Vector2(.25f, .85f),
             Rotation = (float) ConverterUtil.DegreesToRadians(270),
@@ -86,7 +87,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
 
         this._incrementTraitorsButton.Click += this.IncrementTraitorsClick;
 
-        this._decrementTraitorsButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+        this._decrementTraitorsButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
             Position = this._incrementTraitorsButton.Position + new Vector2(this._incrementTraitorsButton.Rectangle.Width, 5f),
             Scale = new Vector2(.25f, .85f),
             Rotation = (float) ConverterUtil.DegreesToRadians(90),

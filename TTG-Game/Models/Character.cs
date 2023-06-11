@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using TTG_Game.Models.Graphics;
 using TTG_Game.Utils.Extensions;
 
 namespace TTG_Game.Models; 
@@ -42,9 +42,15 @@ public class Character {
         texture.SetData(data);
     }
 
-    public Texture2D Idle { get; } = TTGGame.Instance.TextureManager.CharacterIdle;
-    public List<Texture2D> Walk { get; } = TTGGame.Instance.TextureManager.CharacterWalk;
-    public Texture2D Dead { get; } = TTGGame.Instance.TextureManager.CharacterDead;
+    public Texture2D Idle { get; } = TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterIdle);
+    public List<Texture2D> Walk { get; } = new() {
+        TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterWalk0),
+        TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterWalk1),
+        TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterWalk2),
+        TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterWalk3),
+        TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterWalk4)
+    };
+    public Texture2D Dead { get; } = TTGGame.Instance.TextureManager.GetTexture(Texture.CharacterDead);
 
     public Character(Color color) : this(color, color.Darker(.9f)) {}
 

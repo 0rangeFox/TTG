@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Controls;
+using Texture = TTG_Game.Models.Graphics.Texture;
 
 namespace TTG_Game.Models; 
 
@@ -28,7 +29,7 @@ public class SubScene : Scene {
     }
 
     protected SubScene() {
-        this.BackButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+        this.BackButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
             Position = new Vector2(10f),
             Scale = new Vector2(.5f, 1f),
             Effects = SpriteEffects.FlipHorizontally

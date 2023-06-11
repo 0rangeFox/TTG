@@ -50,7 +50,7 @@ public class GameScene : Scene, INetworkScene {
                 break;
             case PlayerMovementPacket pmp:
                 if (pmp.ID != null)
-                    this._players[(Guid) pmp.ID].Position = pmp.Position;
+                    this._players[(Guid) pmp.ID].UpdatePosition(pmp);
                 break;
         }
     }

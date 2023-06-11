@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using TTG_Game.Models.Graphics;
 
 namespace TTG_Game.Models; 
 
@@ -24,11 +25,12 @@ public class AnimatedSprite : Sprite {
         this.Texture = this.Textures[0];
     }
 
-    public void StopAnimation(Texture2D texture) {
+    public void StopAnimation(Texture2D texture, Action? onStopCB = null) {
         if (this._isPaused) return;
         this._isPaused = true;
         this._timer = 0f;
         this.Texture = texture;
+        onStopCB?.Invoke();
     }
 
     public override void Update(GameTime gameTime) {

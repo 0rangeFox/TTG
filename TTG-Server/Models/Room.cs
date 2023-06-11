@@ -75,11 +75,11 @@ public class Room {
         this._colors[index] = color;
     }
 
-    public void UpdatePosition(Client client, Vector2 position) {
+    public void UpdatePosition(Client client, PlayerMovementPacket packet) {
         if (!this.GetPlayerByClient(client, out var cPlayer)) return;
-        cPlayer.Position = position;
+        cPlayer.Position = packet.Position;
 
-        var movementPacket = new PlayerMovementPacket(cPlayer.Position, cPlayer.Client.ID);
+        var movementPacket = new PlayerMovementPacket(cPlayer.Position, packet.Texture, packet.Direction, cPlayer.Client.ID);
         foreach (var player in this._players)
             if (!player.Client.Equals(cPlayer.Client))
                 player.Client.SendPacket(ProtocolType.Udp, movementPacket);

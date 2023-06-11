@@ -9,6 +9,7 @@ using TTG_Game.Models;
 using TTG_Game.Utils.Extensions;
 using TTG_Shared.Models;
 using TTG_Shared.Packets;
+using Texture = TTG_Game.Models.Graphics.Texture;
 
 namespace TTG_Game.Scenes;
 
@@ -32,8 +33,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
                 Position = TTGGame.Instance.GraphicManager.ScreenCenter + new Vector2(-300f + textMeasures.X / 2, this.Height)
             };
 
-            var test = TTGGame.Instance.TextureManager.ArrowRight;
-            this.JoinButton = new Button(TTGGame.Instance.TextureManager.ArrowRight) {
+            this.JoinButton = new Button(TTGGame.Instance.TextureManager.GetTexture(Texture.ArrowRight)) {
                 Centered = true,
                 Position = new Vector2(300f, this.Height + 13f),
                 Scale = new Vector2(.45f, .55f)
@@ -109,7 +109,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
         };
 
         this._nicknameTextField = new TextField(TTGGame.Instance.Nickname) {
-            Position = new Vector2(this._nicknameText.Measures.X + 10f, TTGGame.Instance.GraphicManager.ScreenHeight - TTGGame.Instance.TextureManager.TextField.Height - 5f)
+            Position = new Vector2(this._nicknameText.Measures.X + 10f, TTGGame.Instance.GraphicManager.ScreenHeight - TTGGame.Instance.TextureManager.GetTexture(Texture.TextField).Height - 5f)
         };
 
         this._nicknameTextField.Change += Nickname_Change;
@@ -128,7 +128,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
         var spriteBatch = TTGGame.Instance.SpriteBatch;
 
         spriteBatch.DrawCenter(
-            TTGGame.Instance.TextureManager.TextField,
+            TTGGame.Instance.TextureManager.GetTexture(Texture.TextField),
             new Vector2(0, server.Height),
             null,
             Color.White,
@@ -146,7 +146,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
     public void PacketReceivedCallback(Packet packet) {
         switch (packet) {
             case AddRoomPacket arp:
-                this._servers.Add(new ServerRowData(arp));
+                TTGGame.Instance.RunOnMainThread(() => this._servers.Add(new ServerRowData(arp)));
                 break;
             case RemoveRoomPacket rrp:
                 this._servers.Remove(rrp.ID);

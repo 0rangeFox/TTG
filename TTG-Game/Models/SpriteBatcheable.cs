@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
 namespace TTG_Game.Models;
 

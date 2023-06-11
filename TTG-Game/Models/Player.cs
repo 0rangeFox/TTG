@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Input;
 using TTG_Game.Managers;
 using TTG_Game.Utils;
 using TTG_Shared.Packets;
+using Texture = TTG_Game.Models.Graphics.Texture;
+using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
 namespace TTG_Game.Models; 
 
@@ -23,7 +25,7 @@ public class Player : AnimatedEntity {
             base.Position = value;
 
             if (!this._isNetwork)
-                TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new PlayerMovementPacket(base.Position.ToNumerics()));
+                this.SendUpdatedPositionPacket();
         }
     }
 
@@ -41,6 +43,21 @@ public class Player : AnimatedEntity {
 
         this.Texture = this._character.Idle;
         this.Textures = this._character.Walk;
+    }
+
+    private void SendUpdatedPositionPacket() => TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new PlayerMovementPacket(base.Position.ToNumerics(), (ushort) this.Texture.ID, this.IsFlipped));
+
+    private Texture2D GetNetworkedTexture(Texture id) {
+        if (_character.Idle.ID.Equals(id)) return _character.Idle;
+        if (_character.Dead.ID.Equals(id)) return _character.Dead;
+        return _character.Walk.Find(texture => texture.ID.Equals(id));
+    }
+
+    public void UpdatePosition(PlayerMovementPacket packet) {
+        if (!this._isNetwork) return;
+        this.Position = packet.Position;
+        this.Texture = this.GetNetworkedTexture((Texture) packet.Texture);
+        this.IsFlipped = packet.Direction;
     }
 
     private Vector2 GenerateTextCenterCoords(SpriteFont font, string text) {
@@ -86,22 +103,14 @@ public class Player : AnimatedEntity {
         if (this._selectingNearbyEntity != null && KeyboardUtil.IsGoingDown(Keys.E))
             this._selectingNearbyEntity.ExecuteAction();
 
-        if (Keyboard.GetState().IsKeyDown(Keys.W))
-            this._velocity.Y = -Speed;
-        else if (Keyboard.GetState().IsKeyDown(Keys.S))
-            this._velocity.Y = Speed;
+        if (Keyboard.GetState().IsKeyDown(Keys.W)) this._velocity.Y = -Speed;
+        if (Keyboard.GetState().IsKeyDown(Keys.S)) this._velocity.Y = Speed;
+        if (Keyboard.GetState().IsKeyDown(Keys.A)) this.IsFlipped = (this._velocity.X = -Speed) < 0;
+        if (Keyboard.GetState().IsKeyDown(Keys.D)) this.IsFlipped = (this._velocity.X = Speed) < 0;
 
-        if (Keyboard.GetState().IsKeyDown(Keys.A))
-            this._velocity.X = -Speed;
-        else if (Keyboard.GetState().IsKeyDown(Keys.D))
-            this._velocity.X = Speed;
-
-        if (this._velocity == Vector2.Zero)
-            this.StopAnimation(this._character.Idle);
-        else {
-            this.IsFlipped = this._velocity.X < 0;
-            this.PlayAnimation();
-        }
+        if (this._velocity.Equals(Vector2.Zero)) {
+            this.StopAnimation(this._character.Idle, this.SendUpdatedPositionPacket);
+        } else this.PlayAnimation();
     }
 
     private void DrawSelectedNearbyEntity() {
@@ -109,7 +118,7 @@ public class Player : AnimatedEntity {
 
         var entity = (Sprite)TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
         TTGGame.Instance.SpriteBatch.Draw(
-            TTGGame.Instance.TextureManager.Report,
+            TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Report),
             entity.Position + new Vector2(entity.Rectangle.Width - 100, -100),
             null,
             Color.White,
@@ -122,7 +131,7 @@ public class Player : AnimatedEntity {
     }
 
     public override void Update(GameTime gameTime) {
-        if (_isNetwork) return;
+        if (this._isNetwork) return;
 
         this.CheckKeyboard();
 

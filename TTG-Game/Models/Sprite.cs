@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Effect = TTG_Game.Models.Graphics.Effect;
+using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
 namespace TTG_Game.Models; 
 
@@ -25,7 +27,7 @@ public class Sprite : DrawableComponent {
         this._spriteBatch.Begin(SpriteSortMode.Immediate, transformMatrix: TTGGame.Instance.Scene.Camera?.Transform);
 
         if (IsHighlighted) {
-            var effect = TTGGame.Instance.TextureManager.HighlightEffect;
+            var effect = TTGGame.Instance.TextureManager.GetEffect(Effect.Highlight);
             effect.Parameters["texelSize"].SetValue(new Vector2(1f / (PixelWidth * this.Texture.Width), 1f / (PixelWidth * this.Texture.Height)));
             effect.Parameters["outlineColor"].SetValue(Color.Yellow.ToVector4());
             effect.CurrentTechnique.Passes[0].Apply();
