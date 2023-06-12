@@ -194,7 +194,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
 
     public void PacketReceivedCallback(Packet packet) {
         if (packet is not CreatedRoomPacket { Created: true } crp) return;
-        TTGGame.Instance.Scene = new GameScene((Guid) crp.ID, this._players, ColorExtension.GetFromSystemColor((System.Drawing.Color) crp.Color));
+        TTGGame.Instance.Scene = new GameScene((Guid) crp.ID, this._players, ((System.Drawing.Color) crp.Color).ToXna());
     }
 
 }

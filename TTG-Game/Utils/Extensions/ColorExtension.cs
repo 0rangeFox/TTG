@@ -5,7 +5,7 @@ namespace TTG_Game.Utils.Extensions;
 
 public static class ColorExtension {
 
-    public static Color GetFromSystemColor(System.Drawing.Color color) => new(color.R, color.G, color.B, color.A);
+    public static Color ToXna(this System.Drawing.Color color) => new(color.R, color.G, color.B, color.A);
 
     // Calculate the Euclidean distance between two colors
     public static float Distance(this Color c1, Color c2) {

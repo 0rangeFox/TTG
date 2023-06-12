@@ -2,18 +2,32 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Net.Sockets;
 using System.Numerics;
+using TTG_Shared.Models;
 using TTG_Shared.Packets;
 
 namespace TTG_Server.Models; 
 
 public class Room {
 
+    public enum RoomStatus : byte {
+
+        Waiting,
+        Starting,
+        Running,
+        Ending
+
+    }
+
     public readonly Guid ID = Guid.NewGuid();
     public string Name { get; }
     public ushort MaxPlayers { get; }
     public ushort MaxTraitors { get; }
+    public RoomStatus Status { get; private set; } = RoomStatus.Waiting;
 
     private readonly List<Player> _players;
+    private readonly int _minPlayers;
+    private readonly int _maxTraitors;
+    private readonly HashSet<Guid> _readyPlayers = new();
 
     private readonly Color[] _colors = new Color[16] {
         Color.Red,
@@ -43,6 +57,8 @@ public class Room {
         this.Name = name;
         this.MaxPlayers = maxPlayers;
         this.MaxTraitors = maxTraitors;
+        this._minPlayers = 4 * this.MaxTraitors + 1 - 4;
+        this._maxTraitors = (this.MaxPlayers - 1) / 4 + 1;
 
         TTGServer.Instance.Rooms.Add(this.ID, this);
         Console.WriteLine($"Created a room with ID: {this.ID}");
@@ -107,6 +123,51 @@ public class Room {
 
         if (this._players.Count <= 0)
             this.Shutdown();
+    }
+
+    public void SetReadyPlayer(Client client) {
+        this._readyPlayers.Add(client.ID);
+
+        if (this._readyPlayers.Count == this._players.Count)
+            this.Run();
+    }
+
+    private void ShufflePlayerRoles() {
+        var random = new Random();
+        var traitorsToAdd = this._maxTraitors;
+
+        while (traitorsToAdd > 0) {
+            var randomPlayer = this._players[random.Next(this._players.Count)];
+
+            randomPlayer.Role = Roles.Traitor;
+            traitorsToAdd--;
+        }
+    }
+
+    public void Start() {
+        if (this.Status != RoomStatus.Waiting || this._players.Count <= this._minPlayers) return;
+ 
+        this.Status = RoomStatus.Starting;
+        this.ShufflePlayerRoles();
+
+        foreach (var player in this._players)
+            player.Client.SendPacket(ProtocolType.Udp, new StartRoomPacket(player.Role));
+    }
+
+    public void Run() {
+        if (this.Status == RoomStatus.Running) return;
+
+        this.Status = RoomStatus.Running;
+
+        var readyPacket = new ReadyRoomPacket();
+        foreach (var player in this._players) {
+            player.Position = Vector2.Zero;
+
+            var movementPacket = new PlayerMovementPacket(player.Position, 4, false, player.Client.ID);
+            player.Client.SendPacket(ProtocolType.Udp, movementPacket);
+            player.Client.SendPacket(ProtocolType.Udp, readyPacket);
+        }
+            
     }
 
     public void Shutdown() {

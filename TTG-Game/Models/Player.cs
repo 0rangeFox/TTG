@@ -6,7 +6,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TTG_Game.Managers;
 using TTG_Game.Utils;
+using TTG_Game.Utils.Extensions;
+using TTG_Shared.Models;
 using TTG_Shared.Packets;
+using TTG_Shared.Utils.Extensions;
 using Texture = TTG_Game.Models.Graphics.Texture;
 using Texture2D = TTG_Game.Models.Graphics.Texture2D;
 
@@ -17,7 +20,18 @@ public class Player : AnimatedEntity {
     private const float DetectionRadius = 500.0f;
     private const float Speed = 10f;
 
+    private Roles _role = Roles.Citizen;
+    private Color _roleColor = Color.White;
+
     public string Nickname;
+
+    public Roles Role {
+        get => this._role;
+        set {
+            this._role = value;
+            this._roleColor = this._role.GetColor().ToXna();
+        }
+    }
 
     public new Vector2 Position {
         get => base.Position;
@@ -74,7 +88,7 @@ public class Player : AnimatedEntity {
 
         foreach (var entity in TTGGame.Instance.Entities) {
             var entitySprite = (Sprite) entity;
-            if (entity == this) continue;
+            if (entity == this || entity is Player) continue;
 
             var distance = Vector2.Distance(this.Position, entitySprite.Position);
 
@@ -149,7 +163,7 @@ public class Player : AnimatedEntity {
             TTGGame.Instance.FontManager.AmongUs128px,
             this.Nickname,
             this.GenerateTextCenterCoords(TTGGame.Instance.FontManager.AmongUs128px, this.Nickname) - new Vector2(0f, 325f),
-            Color.Blue
+            this._roleColor
         );
 
         this.DrawSelectedNearbyEntity();

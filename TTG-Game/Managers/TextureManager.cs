@@ -20,6 +20,7 @@ public class TextureManager {
         Empty = new Texture2D(TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice, Texture.Empty, 1, 1);
         this.LoadTexture(Texture.Logo, game.Load<XnaTexture2D>("Images/Logo"));
         this.LoadTexture(Texture.Background, game.Load<XnaTexture2D>("Images/Background"));
+        this.LoadTexture(Texture.RevealRole, game.Load<XnaTexture2D>("Images/RevealRole"));
 
         this.LoadTexture(Texture.Button, game.Load<XnaTexture2D>("Controls/Button"));
         this.LoadTexture(Texture.TextField, game.Load<XnaTexture2D>("Controls/TextField"));

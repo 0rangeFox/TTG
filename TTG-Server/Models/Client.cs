@@ -39,14 +39,12 @@ public class Client {
             packet
         );
 
-        var packetBytes = packet.ToBytes();
-
         switch (protocol) {
             case ProtocolType.Tcp:
-                this._tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
+                this._tcpClient.GetStream().Write(packet.ToBytes());
                 break;
             case ProtocolType.Udp:
-                TTGServer.Instance.NetworkManager.UDPClient.Send(packetBytes, packetBytes.Length, this.UDPIPEndPoint);
+                TTGServer.Instance.NetworkManager.UDPClient.Send(packet.ToBytes(), this.UDPIPEndPoint);
                 break;
             default:
                 throw new NotImplementedException();
@@ -81,6 +79,9 @@ public class Client {
                         client.Value.SendPacket(ProtocolType.Tcp, addPacket);
 
                 break;
+            case StartRoomPacket:
+                this.Room?.Start();
+                break;
             case JoinRoomPacket jrp:
                 if (TTGServer.Instance.Rooms.TryGetValue(jrp.ID, out var joinRoom)) {
                     if (joinRoom.Players.FirstOrDefault(player => string.Equals(player.Nickname, jrp.Nickname, StringComparison.OrdinalIgnoreCase)) == null)
@@ -90,8 +91,11 @@ public class Client {
                 } else
                     this.SendPacket(ProtocolType.Tcp, new JoinRoomResultPacket(false, "Can't connect into the server."));
                 break;
-            case LeaveRoomPacket lrp:
+            case LeaveRoomPacket:
                 this.Room?.RemovePlayer(this);
+                break;
+            case ReadyRoomPacket:
+                this.Room?.SetReadyPlayer(this);
                 break;
             case PlayerMovementPacket pmp:
                 this.Room?.UpdatePosition(this, pmp);

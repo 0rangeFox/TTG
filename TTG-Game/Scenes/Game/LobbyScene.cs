@@ -41,6 +41,7 @@ public class LobbyScene : SubScene {
                 Disabled = true
             };
             this._startButton.Position = new Vector2(0f, TTGGame.Instance.GraphicManager.ScreenHeight / 2 - this._startButton.Rectangle.Height / 2 + 10f);
+            this._startButton.Click += this.OnStartClick;
         }
 
         this._playersText = new Text($"Players {this._players.Count} / {this._maxPlayers}") {
@@ -58,13 +59,20 @@ public class LobbyScene : SubScene {
         TTGGame.Instance.NearbyEntities.Clear();
     }
 
+    private void OnStartClick(object? sender, EventArgs e) {
+        this._quitButton.Disabled = true;
+        this._startButton!.Disabled = true;
+
+        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new StartRoomPacket());
+    }
+
     public override void Update(GameTime gameTime) {
         this._playersText.String = $"Players {this._players.Count} / {this._maxPlayers}";
 
         this._quitButton.Update(gameTime);
 
         if (this._startButton != null) {
-            this._startButton.Disabled = this._players.Count != this._maxPlayers;
+            this._startButton.Disabled = this._players.Count < 2; //this._players.Count != this._maxPlayers;
             this._startButton.Update(gameTime);
         }
 
@@ -75,7 +83,7 @@ public class LobbyScene : SubScene {
     }
 
     public override void Draw(GameTime gameTime) {
-        TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.OrangeRed);
+        TTGGame.Instance.GraphicsDeviceManager.GraphicsDevice.Clear(Color.DarkGray);
         
         this._playersText.Draw(gameTime);
         this._quitButton.Draw(gameTime);

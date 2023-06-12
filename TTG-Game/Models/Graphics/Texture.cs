@@ -6,6 +6,9 @@ public enum Texture : ushort {
     Logo,
     Background,
 
+    // Others,
+    RevealRole,
+
     // Characters
     CharacterIdle,
     CharacterWalk0,

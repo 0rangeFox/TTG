@@ -63,6 +63,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/AmongUs-24px.spritefont
 
+#begin RevealRole.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/RevealRole.png
+
 #begin Images/Actions/Cancel.png
 /importer:TextureImporter
 /processor:TextureProcessor
