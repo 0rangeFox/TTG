@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using TTG_Game.Models;
-using TTG_Game.Scenes.Server;
-using TTG_Shared.Packets;
 
 namespace TTG_Game.Scenes; 
 
@@ -21,7 +18,7 @@ public class GameplayScene : SubScene {
         foreach (var player in this._players.Values)
             player.Update(gameTime);
 
-        this.Camera!.Follow(this._players.First().Value);
+        this.Camera!.Follow(this._players.First(player => !player.Value.IsDead).Value);
     }
 
     public override void Draw(GameTime gameTime) {

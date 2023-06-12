@@ -92,13 +92,34 @@ public class Room {
     }
 
     public void UpdatePosition(Client client, PlayerMovementPacket packet) {
-        if (!this.GetPlayerByClient(client, out var cPlayer)) return;
+        if (!this.GetPlayerByClient(client, out var cPlayer) || cPlayer.IsDead) return;
         cPlayer.Position = packet.Position;
 
         var movementPacket = new PlayerMovementPacket(cPlayer.Position, packet.Texture, packet.Direction, cPlayer.Client.ID);
         foreach (var player in this._players)
             if (!player.Client.Equals(cPlayer.Client))
                 player.Client.SendPacket(ProtocolType.Udp, movementPacket);
+    }
+
+    public void ExecuteAction(Client client, ExecuteActionPacket packet) {
+        if (!this.GetPlayerByClient(client, out var cPlayer)) return;
+
+        switch (packet.Action) {
+            case Actions.Kill:
+                if (cPlayer.Role != Roles.Traitor || cPlayer.IsDead) break;
+                var victim = this._players.Find(victim => victim.Client.ID.Equals(packet.To));
+                if (victim == null || victim.IsDead) break;
+
+                victim.IsDead = true;
+
+                var deadPacket = new PlayerMovementPacket(victim.Position, 12, false, victim.Client.ID);
+                foreach (var player in this._players) {
+                    player.Client.SendPacket(ProtocolType.Udp, deadPacket);
+                    player.Client.SendPacket(ProtocolType.Udp, packet);
+                }
+
+                break;
+        }
     }
 
     public void AddPlayer(Client client, string nickname) {
@@ -163,7 +184,7 @@ public class Room {
         foreach (var player in this._players) {
             player.Position = Vector2.Zero;
 
-            var movementPacket = new PlayerMovementPacket(player.Position, 4, false, player.Client.ID);
+            var movementPacket = new PlayerMovementPacket(player.Position, 6, false, player.Client.ID);
             player.Client.SendPacket(ProtocolType.Udp, movementPacket);
             player.Client.SendPacket(ProtocolType.Udp, readyPacket);
         }

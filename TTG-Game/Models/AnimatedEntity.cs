@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using TTG_Game.Managers;
 using TTG_Game.Models.Graphics;
 
 namespace TTG_Game.Models; 
 
 public class AnimatedEntity : AnimatedSprite, IEntity {
+
+    public Texture2D ActionTexture { get; set; } = TextureManager.Empty;
 
     public bool Highlight {
         get => this.IsHighlighted;

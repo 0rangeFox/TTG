@@ -23,7 +23,7 @@ public class GameScene : Scene, INetworkScene {
         this._id = id;
         this._isOwnerHost = owner;
         this._players = new Dictionary<Guid, Player>(maxPlayers) {
-            { (Guid) TTGGame.Instance.NetworkManager.ID, new Player(TTGGame.Instance.Nickname, color, Vector2.Zero) }
+            { (Guid) TTGGame.Instance.NetworkManager.ID, new Player((Guid) TTGGame.Instance.NetworkManager.ID, TTGGame.Instance.Nickname, color, Vector2.Zero) }
         };
 
         this._camera = this.Camera = new Camera();
@@ -40,7 +40,7 @@ public class GameScene : Scene, INetworkScene {
         switch (packet) {
             case ConnectRoomPacket crp:
                 if (!this._players.ContainsKey(crp.ID))
-                    this._players.Add(crp.ID, new Player(crp.Nickname, crp.Color.ToXna(), crp.Position, true));
+                    this._players.Add(crp.ID, new Player(crp.ID, crp.Nickname, crp.Color.ToXna(), crp.Position, true));
                 break;
             case DisconnectRoomPacket drp:
                 this._players.Remove(drp.ID);
@@ -58,6 +58,14 @@ public class GameScene : Scene, INetworkScene {
                 this._scene = new GameplayScene(this._players) {
                     Camera = this.Camera = this._camera
                 };
+                break;
+            case ExecuteActionPacket eap:
+                switch (eap.Action) {
+                    case Actions.Kill:
+                        if (this._players.TryGetValue((Guid) eap.To, out var victim))
+                            victim.Kill();
+                        break;
+                }
                 break;
         }
     }

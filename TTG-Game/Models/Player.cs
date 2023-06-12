@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -23,7 +24,9 @@ public class Player : AnimatedEntity {
     private Roles _role = Roles.Citizen;
     private Color _roleColor = Color.White;
 
+    public Guid ID;
     public string Nickname;
+    public bool IsDead;
 
     public Roles Role {
         get => this._role;
@@ -50,7 +53,8 @@ public class Player : AnimatedEntity {
     private Vector2 _velocity = Vector2.Zero;
     private IEntity? _selectingNearbyEntity;
 
-    public Player(string nickname, Color color, Vector2 position, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
+    public Player(Guid id, string nickname, Color color, Vector2 position, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
+        this.ID = id;
         this.Nickname = nickname;
         this.Position = position;
         this._character = new Character(color);
@@ -75,6 +79,12 @@ public class Player : AnimatedEntity {
         this.IsFlipped = packet.Direction;
     }
 
+    public void Kill() {
+        if (this.IsDead) return;
+        this.IsDead = true;
+        this.Texture = this._character.Dead;
+    }
+
     private Vector2 GenerateTextCenterCoords(SpriteFont font, string text) {
         var fontMeasures = font.MeasureString(text);
         var centerX = this.Position.X + (this.Texture.Width - fontMeasures.X) / 2;
@@ -82,24 +92,35 @@ public class Player : AnimatedEntity {
         return new Vector2(centerX, centerY);
     }
 
+    private void CheckRelationshipByPlayer(IEntity entity) {
+        if (entity is not Player p) return;
+
+        if (this.Role == Roles.Traitor && !p.IsDead && !entity.ActionTexture.ID.Equals(Graphics.Texture.Kill))
+            entity.ActionTexture = TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Kill);
+        else if (p.IsDead && !entity.ActionTexture.ID.Equals(Graphics.Texture.Report))
+            entity.ActionTexture = TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Report);
+    }
+
     private void CheckNearbyEntities() {
         var nearbyEntities = TTGGame.Instance.NearbyEntities;
         nearbyEntities.Clear();
 
         foreach (var entity in TTGGame.Instance.Entities) {
-            var entitySprite = (Sprite) entity;
-            if (entity == this || entity is Player) continue;
+            if (entity == this) continue;
 
-            var distance = Vector2.Distance(this.Position, entitySprite.Position);
+            var distance = Vector2.Distance(this.Position, ((Sprite) entity).Position);
 
             if (distance <= DetectionRadius) {
+                this.CheckRelationshipByPlayer(entity);
+
                 nearbyEntities.Add(entity);
 
                 this._selectingNearbyEntity ??= entity;
-                entity.Highlight = entity == this._selectingNearbyEntity;
+                entity.Highlight = entity.ActionTexture.ID != Graphics.Texture.Empty && entity == this._selectingNearbyEntity;
             } else if (entity == this._selectingNearbyEntity) {
                 this._selectingNearbyEntity = null;
                 entity.Highlight = false;
+                entity.ActionTexture = TextureManager.Empty;
             }
         }
     }
@@ -131,10 +152,12 @@ public class Player : AnimatedEntity {
     private void DrawSelectedNearbyEntity() {
         if (this._selectingNearbyEntity == null) return;
 
-        var entity = (Sprite) TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
+        var entity = TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
+        var entitySprite = (Sprite) entity;
+
         TTGGame.Instance.SpriteBatch.Draw(
-            TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Report),
-            entity.Position + new Vector2(entity.Rectangle.Width - 100, -100),
+            entity.ActionTexture,
+            entitySprite.Position + new Vector2(entitySprite.Rectangle.Width - 100, -100),
             null,
             Color.White,
             0f,
@@ -146,7 +169,7 @@ public class Player : AnimatedEntity {
     }
 
     public override void Update(GameTime gameTime) {
-        if (this._isNetwork) return;
+        if (this.IsDead || this._isNetwork) return;
 
         this.CheckKeyboard();
 
@@ -159,14 +182,16 @@ public class Player : AnimatedEntity {
     }
 
     public override void Draw(GameTime gameTime) {
-        TTGGame.Instance.SpriteBatch.DrawString(
-            TTGGame.Instance.FontManager.AmongUs128px,
-            this.Nickname,
-            this.GenerateTextCenterCoords(TTGGame.Instance.FontManager.AmongUs128px, this.Nickname) - new Vector2(0f, 325f),
-            this._roleColor
-        );
+        if (!this.IsDead) {
+            TTGGame.Instance.SpriteBatch.DrawString(
+                TTGGame.Instance.FontManager.AmongUs128px,
+                this.Nickname,
+                this.GenerateTextCenterCoords(TTGGame.Instance.FontManager.AmongUs128px, this.Nickname) - new Vector2(0f, 325f),
+                this._roleColor
+            );
 
-        this.DrawSelectedNearbyEntity();
+            this.DrawSelectedNearbyEntity();
+        }
 
         base.Draw(gameTime);
     }

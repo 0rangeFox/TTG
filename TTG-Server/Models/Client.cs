@@ -100,6 +100,9 @@ public class Client {
             case PlayerMovementPacket pmp:
                 this.Room?.UpdatePosition(this, pmp);
                 break;
+            case ExecuteActionPacket eap:
+                this.Room?.ExecuteAction(this, eap);
+                break;
         }
     }
 

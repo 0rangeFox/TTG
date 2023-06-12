@@ -37,6 +37,7 @@ public class TextureManager {
         this.LoadTexture(Texture.Quit, game.Load<XnaTexture2D>("Images/Actions/Quit"));
         this.LoadTexture(Texture.Start, game.Load<XnaTexture2D>("Images/Actions/Start"));
         this.LoadTexture(Texture.Report, game.Load<XnaTexture2D>("Images/Actions/Report"));
+        this.LoadTexture(Texture.Kill, game.Load<XnaTexture2D>("Images/Actions/Kill"));
 
         this._effects.Add(Effect.Highlight, game.Load<XnaEffect>("Shaders/Highlight"));
     }

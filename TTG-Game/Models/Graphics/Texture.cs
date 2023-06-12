@@ -2,12 +2,15 @@ namespace TTG_Game.Models.Graphics;
 
 public enum Texture : ushort {
 
+    // General
     Empty,
     Logo,
     Background,
 
-    // Others,
-    RevealRole,
+    // Controls
+    Button,
+    TextField,
+    ArrowRight,
 
     // Characters
     CharacterIdle,
@@ -22,10 +25,9 @@ public enum Texture : ushort {
     Start,
     Quit,
     Report,
+    Kill,
 
-    // Controls
-    Button,
-    TextField,
-    ArrowRight
+    // Others
+    RevealRole
 
 }
