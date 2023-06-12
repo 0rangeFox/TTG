@@ -43,10 +43,10 @@ public class GameScene : Scene, INetworkScene {
         switch (packet) {
             case ConnectRoomPacket crp:
                 if (!this._players.ContainsKey(crp.ID))
-                    TTGGame.Instance.RunOnMainThread(() => this._players.Add(crp.ID, new Player(crp.Nickname, ColorExtension.GetFromSystemColor(crp.Color), crp.Position, true)));
+                    this._players.Add(crp.ID, new Player(crp.Nickname, ColorExtension.GetFromSystemColor(crp.Color), crp.Position, true));
                 break;
             case DisconnectRoomPacket drp:
-                TTGGame.Instance.RunOnMainThread(() => this._players.Remove(drp.ID));
+                this._players.Remove(drp.ID);
                 break;
             case PlayerMovementPacket pmp:
                 if (this._players.TryGetValue((Guid) pmp.ID, out var player))

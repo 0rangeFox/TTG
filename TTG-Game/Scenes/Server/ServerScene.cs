@@ -28,7 +28,7 @@ public class ServerScene : Scene, INetworkScene {
 
     public void PacketReceivedCallback(Packet packet) {
         if (packet is JoinRoomResultPacket jrrp && jrrp.Joined)
-            TTGGame.Instance.RunOnMainThread(() => TTGGame.Instance.Scene = new GameScene(jrrp));
+            TTGGame.Instance.Scene = new GameScene(jrrp);
         else if (this._subScene is INetworkScene subScene)
             subScene.PacketReceivedCallback(packet);
     }

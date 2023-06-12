@@ -146,7 +146,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
     public void PacketReceivedCallback(Packet packet) {
         switch (packet) {
             case AddRoomPacket arp:
-                TTGGame.Instance.RunOnMainThread(() => this._servers.Add(new ServerRowData(arp)));
+                this._servers.Add(new ServerRowData(arp));
                 break;
             case RemoveRoomPacket rrp:
                 this._servers.Remove(rrp.ID);

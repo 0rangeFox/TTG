@@ -8,6 +8,7 @@ using TTG_Game.Networking;
 using TTG_Game.Scenes;
 using TTG_Game.Utils;
 using TTG_Shared;
+using TTG_Shared.Models;
 using TTG_Shared.Utils;
 
 namespace TTG_Game.Managers; 
@@ -58,6 +59,11 @@ public class GameManager {
     public void RunOnMainThread(Action func) => this._actions.Enqueue(func);
 
     public T Load<T>(string assetName) => this.Game.Content.Load<T>(assetName);
+
+    public void HandlePacket(Packet packet) {
+        if (this.Scene is not INetworkScene scene) return;
+        this.RunOnMainThread(() => scene.PacketReceivedCallback(packet));
+    }
 
     public void Initialize() {
         this.Game.Window.Title = $"The Traitor's Gambit v{GitInformation.Version} ({GitInformation.ShortSha})";

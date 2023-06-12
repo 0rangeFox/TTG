@@ -78,8 +78,7 @@ public class NetworkManager : IDisposable {
 
                 if (packet is HandshakePacket hp)
                     this._handshakePacket = hp;
-                else if (TTGGame.Instance.Scene is INetworkScene scene)
-                    scene.PacketReceivedCallback(packet);
+                else TTGGame.Instance.HandlePacket(packet);
             }
         } catch (Exception ex) {
             Console.WriteLine($"Error occurred while handling TCP Packet ({packet}): " + ex.Message);
@@ -90,8 +89,7 @@ public class NetworkManager : IDisposable {
         IPEndPoint? serverEndPoint = null;
         var receivedBytes = this._udpClient.EndReceive(ar, ref serverEndPoint);
 
-        if (TTGGame.Instance.Scene is INetworkScene scene)
-            scene.PacketReceivedCallback(Packet.FromBytes(receivedBytes));
+        TTGGame.Instance.HandlePacket(Packet.FromBytes(receivedBytes));
 
         // Continue receiving UDP messages
         this._udpClient.BeginReceive(this.UDPMessageReceivedCallback, null);

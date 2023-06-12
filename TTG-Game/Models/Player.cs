@@ -117,7 +117,7 @@ public class Player : AnimatedEntity {
     private void DrawSelectedNearbyEntity() {
         if (this._selectingNearbyEntity == null) return;
 
-        var entity = (Sprite)TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
+        var entity = (Sprite) TTGGame.Instance.NearbyEntities[TTGGame.Instance.NearbyEntities.IndexOf(this._selectingNearbyEntity)];
         TTGGame.Instance.SpriteBatch.Draw(
             TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Report),
             entity.Position + new Vector2(entity.Rectangle.Width - 100, -100),
