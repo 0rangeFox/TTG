@@ -104,10 +104,10 @@ public class Player : AnimatedEntity {
         if (this._selectingNearbyEntity != null && KeyboardUtil.IsGoingDown(Keys.E))
             this._selectingNearbyEntity.ExecuteAction();
 
-        if (Keyboard.GetState().IsKeyDown(Keys.W)) this._velocity.Y = -Speed;
-        if (Keyboard.GetState().IsKeyDown(Keys.S)) this._velocity.Y = Speed;
-        if (Keyboard.GetState().IsKeyDown(Keys.A)) this.IsFlipped = (this._velocity.X = -Speed) < 0;
-        if (Keyboard.GetState().IsKeyDown(Keys.D)) this.IsFlipped = (this._velocity.X = Speed) < 0;
+        if (Keyboard.GetState().IsKeyDown(Keys.W)) this._velocity.Y += -Speed;
+        if (Keyboard.GetState().IsKeyDown(Keys.S)) this._velocity.Y += Speed;
+        if (Keyboard.GetState().IsKeyDown(Keys.A)) this.IsFlipped = (this._velocity.X += -Speed) < 0;
+        if (Keyboard.GetState().IsKeyDown(Keys.D)) this.IsFlipped = (this._velocity.X += Speed) < 0;
 
         if (this._velocity.Equals(Vector2.Zero)) {
             this.StopAnimation(this._character.Idle, this.SendUpdatedPositionPacket);
