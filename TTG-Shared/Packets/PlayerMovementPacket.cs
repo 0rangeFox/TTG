@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using System.Numerics;
 using TTG_Shared.Models;
 
@@ -12,7 +13,7 @@ public class PlayerMovementPacket : Packet {
     public readonly ushort Texture;
     public readonly bool Direction;
 
-    public PlayerMovementPacket(Vector2 position, ushort texture, bool direction, Guid? id = null) {
+    public PlayerMovementPacket(Vector2 position, ushort texture, bool direction, Guid? id = null) : base(ProtocolType.Udp) {
         this.ID = id;
         this.Position = position;
         this.Texture = texture;

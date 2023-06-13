@@ -23,7 +23,7 @@ public class RoleRevealScene : SubScene {
         this._role = role;
     }
 
-    private void SetReadyToPlay() => TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new ReadyRoomPacket());
+    private void SetReadyToPlay() => TTGGame.Instance.NetworkManager.SendPacket(new ReadyRoomPacket());
 
     public override void Update(GameTime gameTime) {
         if (this._isReady) return;

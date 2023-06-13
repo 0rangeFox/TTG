@@ -57,7 +57,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
             var serverData = new ServerData(server, this._dictionary.Values.Count > 0 ? this._dictionary.Values.Last().Height + 55 : -125);
             serverData.JoinButton.Click += (_, _) => {
                 this._changeStatusOfActions(true);
-                TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Tcp, new JoinRoomPacket(serverData.ID, TTGGame.Instance.Nickname));
+                TTGGame.Instance.NetworkManager.SendPacket(new JoinRoomPacket(serverData.ID, TTGGame.Instance.Nickname));
             };
             this._dictionary.Add(server.ID, serverData);
         }
@@ -92,7 +92,7 @@ public class ServerSelectorScene : SubScene, INetworkScene {
 
     public ServerSelectorScene(EventHandler? createServerCallback) {
         this._servers = new ServerDictionary(this.ChangeStatusOfActions);
-        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Tcp, new RequestRoomsPacket());
+        TTGGame.Instance.NetworkManager.SendPacket(new RequestRoomsPacket());
 
         this._titleScene = new Text("Server Selector") {
             Position = new Vector2((TTGGame.Instance.GraphicManager.ScreenWidth / 2) - 50f, 25f)

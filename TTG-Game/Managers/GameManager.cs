@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Models;
-using TTG_Game.Networking;
 using TTG_Game.Scenes;
 using TTG_Game.Utils;
 using TTG_Shared;

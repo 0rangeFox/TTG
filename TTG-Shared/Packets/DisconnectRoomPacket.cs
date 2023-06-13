@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using TTG_Shared.Models;
 
 namespace TTG_Shared.Packets; 
@@ -8,7 +9,7 @@ public class DisconnectRoomPacket : Packet {
 
     public readonly Guid ID;
 
-    public DisconnectRoomPacket(Guid id) {
+    public DisconnectRoomPacket(Guid id) : base(ProtocolType.Udp) {
         this.ID = id;
     }
 

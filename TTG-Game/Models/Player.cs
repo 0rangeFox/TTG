@@ -64,7 +64,7 @@ public class Player : AnimatedEntity {
         this.Textures = this._character.Walk;
     }
 
-    private void SendUpdatedPositionPacket() => TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new PlayerMovementPacket(base.Position.ToNumerics(), (ushort) this.Texture.ID, this.IsFlipped));
+    private void SendUpdatedPositionPacket() => TTGGame.Instance.NetworkManager.SendPacket(new PlayerMovementPacket(base.Position.ToNumerics(), (ushort) this.Texture.ID, this.IsFlipped));
 
     private Texture2D GetNetworkedTexture(Texture id) {
         if (this._character.Idle.ID.Equals(id)) return this._character.Idle;

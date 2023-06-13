@@ -159,7 +159,7 @@ public class ServerCreatorScene : SubScene, INetworkScene {
     private void CreateServer_Click(object? sender, EventArgs e) {
         this.ChangeStatusOfActions(true);
 
-        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Tcp, new CreateRoomPacket(TTGGame.Instance.Nickname, this._serverTextField.String, this._players, this._traitors));
+        TTGGame.Instance.NetworkManager.SendPacket(new CreateRoomPacket(TTGGame.Instance.Nickname, this._serverTextField.String, this._players, this._traitors));
     }
 
     public override void Update(GameTime gameTime) {

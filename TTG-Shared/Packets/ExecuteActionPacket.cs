@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using System.Text;
 using TTG_Shared.Models;
 
@@ -10,7 +11,7 @@ public class ExecuteActionPacket : Packet {
     public readonly Actions Action;
     public readonly Guid? To;
 
-    public ExecuteActionPacket(Actions action, Guid? to = null) {
+    public ExecuteActionPacket(Actions action, Guid? to = null) : base(ProtocolType.Udp) {
         this.Action = action;
         this.To = to;
     }

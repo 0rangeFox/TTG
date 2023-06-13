@@ -16,7 +16,7 @@ public interface IEntity {
             case Player player:
                 switch (player.ActionTexture.ID) {
                     case Texture.Kill:
-                        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new ExecuteActionPacket(Actions.Kill, player.ID));
+                        TTGGame.Instance.NetworkManager.SendPacket(new ExecuteActionPacket(Actions.Kill, player.ID));
                         break;
                 }
                 break;

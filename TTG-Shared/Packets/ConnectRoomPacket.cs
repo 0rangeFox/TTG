@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using TTG_Shared.Models;
@@ -14,7 +15,7 @@ public class ConnectRoomPacket : Packet {
     public readonly Color Color;
     public readonly Vector2 Position;
 
-    public ConnectRoomPacket(Guid id, string nickname, Color color, Vector2 position) {
+    public ConnectRoomPacket(Guid id, string nickname, Color color, Vector2 position) : base(ProtocolType.Udp) {
         this.ID = id;
         this.Nickname = nickname;
         this.Color = color;

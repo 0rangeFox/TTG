@@ -30,16 +30,16 @@ public class Client {
         this._task = Task.Run(this.TCPDataReceivedCallback, this._taskCancellationTokenSource.Token);
     }
 
-    public void SendPacket(ProtocolType protocol, Packet packet) {
+    public void SendPacket(Packet packet, ProtocolType? protocolOverride = null) {
         Console.WriteLine(
             "[{0} | {1}] Packet sent for {2} : {3}",
             DateTime.Now,
-            protocol == ProtocolType.Tcp ? "TCP" : "UDP",
-            protocol == ProtocolType.Tcp ? this.TCPIPEndPoint : this.UDPIPEndPoint,
+            (protocolOverride ?? packet.Protocol) == ProtocolType.Tcp ? "TCP" : "UDP",
+            (protocolOverride ?? packet.Protocol) == ProtocolType.Tcp ? this.TCPIPEndPoint : this.UDPIPEndPoint,
             packet
         );
 
-        switch (protocol) {
+        switch (protocolOverride ?? packet.Protocol) {
             case ProtocolType.Tcp:
                 this._tcpClient.GetStream().Write(packet.ToBytes());
                 break;
@@ -63,20 +63,20 @@ public class Client {
         switch (packet) {
             case RequestRoomsPacket:
                 foreach (var room in TTGServer.Instance.Rooms.Values.ToList())
-                    this.SendPacket(ProtocolType.Tcp, new AddRoomPacket(room.ID, room.Name, room.MaxPlayers, room.MaxTraitors));
+                    this.SendPacket(new AddRoomPacket(room.ID, room.Name, room.MaxPlayers, room.MaxTraitors));
                 break;
             case RequestRoomPlayersPacket:
                 foreach (var player in this.Room?.Players ?? Array.Empty<Player>())
-                    this.SendPacket(ProtocolType.Udp, new ConnectRoomPacket(player.Client.ID, player.Nickname, player.Color, player.Position));
+                    this.SendPacket(new ConnectRoomPacket(player.Client.ID, player.Nickname, player.Color, player.Position));
                 break;
             case CreateRoomPacket crp:
                 var newRoom = new Room(this, crp);
-                this.SendPacket(ProtocolType.Tcp, new CreatedRoomPacket(true, string.Empty, newRoom.ID, newRoom.Players[0].Color));
+                this.SendPacket(new CreatedRoomPacket(true, string.Empty, newRoom.ID, newRoom.Players[0].Color));
 
                 var addPacket = new AddRoomPacket(newRoom.ID, newRoom.Name, newRoom.MaxPlayers, newRoom.MaxTraitors);
                 foreach (var client in TTGServer.Instance.Clients)
                     if (!client.Value.TCPIPEndPoint.Equals(this.TCPIPEndPoint) && client.Key.Equals(client.Value.TCPIPEndPoint))
-                        client.Value.SendPacket(ProtocolType.Tcp, addPacket);
+                        client.Value.SendPacket(addPacket);
 
                 break;
             case StartRoomPacket:
@@ -87,9 +87,9 @@ public class Client {
                     if (joinRoom.Players.FirstOrDefault(player => string.Equals(player.Nickname, jrp.Nickname, StringComparison.OrdinalIgnoreCase)) == null)
                         joinRoom.AddPlayer(this, jrp.Nickname);
                     else
-                        this.SendPacket(ProtocolType.Tcp, new JoinRoomResultPacket(false, "This nickname is already in-game."));
+                        this.SendPacket(new JoinRoomResultPacket(false, "This nickname is already in-game."));
                 } else
-                    this.SendPacket(ProtocolType.Tcp, new JoinRoomResultPacket(false, "Can't connect into the server."));
+                    this.SendPacket(new JoinRoomResultPacket(false, "Can't connect into the server."));
                 break;
             case LeaveRoomPacket:
                 this.Room?.RemovePlayer(this);

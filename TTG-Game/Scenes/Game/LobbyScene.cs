@@ -53,7 +53,7 @@ public class LobbyScene : SubScene {
 
     private void OnQuitClick(object? sender, EventArgs e) {
         TTGGame.Instance.Scene = new ServerScene();
-        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new LeaveRoomPacket());
+        TTGGame.Instance.NetworkManager.SendPacket(new LeaveRoomPacket());
 
         TTGGame.Instance.Entities.Clear();
         TTGGame.Instance.NearbyEntities.Clear();
@@ -63,7 +63,7 @@ public class LobbyScene : SubScene {
         this._quitButton.Disabled = true;
         this._startButton!.Disabled = true;
 
-        TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new StartRoomPacket());
+        TTGGame.Instance.NetworkManager.SendPacket(new StartRoomPacket());
     }
 
     public override void Update(GameTime gameTime) {

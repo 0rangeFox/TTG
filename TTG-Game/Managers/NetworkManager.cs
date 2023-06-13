@@ -8,7 +8,7 @@ using TTG_Shared.Models;
 using TTG_Shared.Packets;
 using TTG_Shared.Utils;
 
-namespace TTG_Game.Networking; 
+namespace TTG_Game.Managers; 
 
 public class NetworkManager : IDisposable {
 
@@ -37,25 +37,20 @@ public class NetworkManager : IDisposable {
 
             this._udpClient.Connect(endPoint);
             Console.WriteLine("Connected to the server via UDP and sending for handshake.");
-            this.SendPacket(ProtocolType.Udp, this._handshakePacket);
             this._udpClient.BeginReceive(this.UDPMessageReceivedCallback, null);
-
-            this.SendPacket(ProtocolType.Tcp, new TestPacket());
-            this.SendPacket(ProtocolType.Udp, new TestPacket());
+            this.SendPacket(this._handshakePacket, ProtocolType.Udp);
         } catch (Exception ex) {
             Console.WriteLine("Error occurred: " + ex.Message);
         }
     }
 
-    public void SendPacket(ProtocolType protocol, Packet packet) {
-        var packetBytes = packet.ToBytes();
-
-        switch (protocol) {
+    public void SendPacket(Packet packet, ProtocolType? protocolOverride = null) {
+        switch (protocolOverride ?? packet.Protocol) {
             case ProtocolType.Tcp:
-                this._tcpClient.GetStream().Write(packetBytes, 0, packetBytes.Length);
+                this._tcpClient.GetStream().Write(packet.ToBytes());
                 break;
             case ProtocolType.Udp:
-                this._udpClient.Send(packetBytes, packetBytes.Length);
+                this._udpClient.Send(packet.ToBytes());
                 break;
             default:
                 throw new NotImplementedException();

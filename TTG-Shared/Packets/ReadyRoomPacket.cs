@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using TTG_Shared.Models;
 
 namespace TTG_Shared.Packets; 
@@ -5,6 +6,8 @@ namespace TTG_Shared.Packets;
 public class ReadyRoomPacket : Packet {
 
     public new const byte PacketType = 0x16;
+
+    public ReadyRoomPacket() : base(ProtocolType.Udp) {}
 
     public override byte[] ToBytes() => new[] { PacketType };
 

@@ -33,7 +33,7 @@ public class GameScene : Scene, INetworkScene {
     }
 
     public GameScene(JoinRoomResultPacket jrrp) : this((Guid) jrrp.ID, (ushort) jrrp.MaxPlayers, ((System.Drawing.Color) jrrp.Color).ToXna(), false) {
-       TTGGame.Instance.NetworkManager.SendPacket(ProtocolType.Udp, new RequestRoomPlayersPacket()); 
+       TTGGame.Instance.NetworkManager.SendPacket(new RequestRoomPlayersPacket()); 
     }
 
     public void PacketReceivedCallback(Packet packet) {

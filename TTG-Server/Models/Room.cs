@@ -98,7 +98,7 @@ public class Room {
         var movementPacket = new PlayerMovementPacket(cPlayer.Position, packet.Texture, packet.Direction, cPlayer.Client.ID);
         foreach (var player in this._players)
             if (!player.Client.Equals(cPlayer.Client))
-                player.Client.SendPacket(ProtocolType.Udp, movementPacket);
+                player.Client.SendPacket(movementPacket);
     }
 
     public void ExecuteAction(Client client, ExecuteActionPacket packet) {
@@ -114,8 +114,8 @@ public class Room {
 
                 var deadPacket = new PlayerMovementPacket(victim.Position, 12, false, victim.Client.ID);
                 foreach (var player in this._players) {
-                    player.Client.SendPacket(ProtocolType.Udp, deadPacket);
-                    player.Client.SendPacket(ProtocolType.Udp, packet);
+                    player.Client.SendPacket(deadPacket);
+                    player.Client.SendPacket(packet);
                 }
 
                 break;
@@ -124,11 +124,11 @@ public class Room {
 
     public void AddPlayer(Client client, string nickname) {
         var newPlayer = new Player(client, nickname, this.GetRandomColor());
-        client.SendPacket(ProtocolType.Tcp, new JoinRoomResultPacket(true, "", this.ID, this.MaxPlayers, newPlayer.Color));
+        client.SendPacket(new JoinRoomResultPacket(true, "", this.ID, this.MaxPlayers, newPlayer.Color));
 
         var connectPacket = new ConnectRoomPacket(client.ID, newPlayer.Nickname, newPlayer.Color, newPlayer.Position);
         foreach (var player in this._players)
-            player.Client.SendPacket(ProtocolType.Udp, connectPacket);
+            player.Client.SendPacket(connectPacket);
 
         this._players.Add(newPlayer);
     }
@@ -140,7 +140,7 @@ public class Room {
 
         var disconnectPacket = new DisconnectRoomPacket(client.ID);
         foreach (var player in this._players)
-            player.Client.SendPacket(ProtocolType.Udp, disconnectPacket);
+            player.Client.SendPacket(disconnectPacket);
 
         if (this._players.Count <= 0)
             this.Shutdown();
@@ -172,7 +172,7 @@ public class Room {
         this.ShufflePlayerRoles();
 
         foreach (var player in this._players)
-            player.Client.SendPacket(ProtocolType.Udp, new StartRoomPacket(player.Role));
+            player.Client.SendPacket(new StartRoomPacket(player.Role));
     }
 
     public void Run() {
@@ -185,10 +185,10 @@ public class Room {
             player.Position = Vector2.Zero;
 
             var movementPacket = new PlayerMovementPacket(player.Position, 6, false, player.Client.ID);
-            player.Client.SendPacket(ProtocolType.Udp, movementPacket);
-            player.Client.SendPacket(ProtocolType.Udp, readyPacket);
+            player.Client.SendPacket(movementPacket);
+            player.Client.SendPacket(readyPacket);
         }
-            
+
     }
 
     public void Shutdown() {
@@ -197,7 +197,7 @@ public class Room {
         var removePacket = new RemoveRoomPacket(this.ID);
         foreach (var client in TTGServer.Instance.Clients)
             if (client.Key.Equals(client.Value.TCPIPEndPoint))
-                client.Value.SendPacket(ProtocolType.Tcp, removePacket);
+                client.Value.SendPacket(removePacket);
 
         Console.WriteLine($"Deleted the room with ID: {this.ID}");
     }

@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using TTG_Shared.Models;
 
 namespace TTG_Shared.Packets; 
@@ -8,7 +9,7 @@ public class StartRoomPacket : Packet {
 
     public readonly Roles Role;
 
-    public StartRoomPacket(Roles role = Roles.Citizen) {
+    public StartRoomPacket(Roles role = Roles.Citizen) : base(ProtocolType.Udp) {
         this.Role = role;
     }
 
