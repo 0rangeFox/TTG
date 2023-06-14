@@ -277,7 +277,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Logo.png#
+/build:Images/Logo.png
 
 #begin Images/RevealRole.png
 /importer:TextureImporter
@@ -289,7 +289,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/RevealRole.png#
+/build:Images/RevealRole.png
 
 #begin Shaders/Highlight.fx
 /importer:EffectImporter
