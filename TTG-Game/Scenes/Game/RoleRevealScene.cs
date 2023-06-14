@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TTG_Game.Models;
@@ -21,6 +20,7 @@ public class RoleRevealScene : SubScene {
 
     public RoleRevealScene(Roles role) {
         this._role = role;
+        TTGGame.Instance.AudioManager.Play(Sound.RoleReveal);
     }
 
     private void SetReadyToPlay() => TTGGame.Instance.NetworkManager.SendPacket(new ReadyRoomPacket());

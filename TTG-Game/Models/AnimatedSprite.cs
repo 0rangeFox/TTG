@@ -19,10 +19,11 @@ public class AnimatedSprite : Sprite {
         this.Textures = textures;
     }
 
-    public void PlayAnimation() {
+    public void PlayAnimation(Action? onStartCB = null) {
         if (!this._isPaused) return;
         this._isPaused = false;
         this.Texture = this.Textures[0];
+        onStartCB?.Invoke();
     }
 
     public void StopAnimation(Texture2D texture, Action? onStopCB = null) {

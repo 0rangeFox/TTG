@@ -52,8 +52,9 @@ public class LobbyScene : SubScene {
     }
 
     private void OnQuitClick(object? sender, EventArgs e) {
-        TTGGame.Instance.Scene = new ServerScene();
         TTGGame.Instance.NetworkManager.SendPacket(new LeaveRoomPacket());
+        TTGGame.Instance.Scene = new ServerScene();
+        TTGGame.Instance.AudioManager.ChangeBackgroundStatus(true);
 
         TTGGame.Instance.Entities.Clear();
         TTGGame.Instance.NearbyEntities.Clear();

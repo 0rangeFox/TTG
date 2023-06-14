@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TTG_Game.Managers;
+using TTG_Game.Scenes;
 using TTG_Game.Utils;
 using TTG_Game.Utils.Extensions;
 using TTG_Shared.Models;
@@ -18,8 +19,10 @@ namespace TTG_Game.Models;
 
 public class Player : AnimatedEntity {
 
+    private const float MaxVolumeDistance = 1000.0f;
     private const float DetectionRadius = 500.0f;
-    private const float Speed = 10f;
+    private const float Speed = 10.0f;
+    private const float MaxFootstepsVolume = .45f;
 
     private Roles _role = Roles.Citizen;
     private Color _roleColor = Color.White;
@@ -53,6 +56,8 @@ public class Player : AnimatedEntity {
     private Vector2 _velocity = Vector2.Zero;
     private IEntity? _selectingNearbyEntity;
 
+    private readonly SoundEffectInstance _footstepsSound = TTGGame.Instance.AudioManager.GetSound(Sound.Footsteps);
+
     public Player(Guid id, string nickname, Color color, Vector2 position, bool isNetwork = false) : base(new List<Texture2D>() { TextureManager.Empty }) {
         this.ID = id;
         this.Nickname = nickname;
@@ -62,6 +67,9 @@ public class Player : AnimatedEntity {
 
         this.Texture = this._character.Idle;
         this.Textures = this._character.Walk;
+
+        this._footstepsSound.IsLooped = true;
+        this._footstepsSound.Volume = MaxFootstepsVolume;
     }
 
     private void SendUpdatedPositionPacket() => TTGGame.Instance.NetworkManager.SendPacket(new PlayerMovementPacket(base.Position.ToNumerics(), (ushort) this.Texture.ID, this.IsFlipped));
@@ -77,12 +85,18 @@ public class Player : AnimatedEntity {
         this.Position = packet.Position;
         this.Texture = this.GetNetworkedTexture((Texture) packet.Texture);
         this.IsFlipped = packet.Direction;
+
+        if (this.Texture.ID.Equals(Graphics.Texture.CharacterIdle))
+            this._footstepsSound.Stop();
+        else this._footstepsSound.Play();
     }
 
     public void Kill() {
         if (this.IsDead) return;
         this.IsDead = true;
         this.Texture = this._character.Dead;
+        this._footstepsSound.Stop();
+        TTGGame.Instance.AudioManager.Play(Sound.Kill);
     }
 
     private Vector2 GenerateTextCenterCoords(SpriteFont font, string text) {
@@ -99,6 +113,16 @@ public class Player : AnimatedEntity {
             entity.ActionTexture = TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Kill);
         else if (p.IsDead && !entity.ActionTexture.ID.Equals(Graphics.Texture.Report))
             entity.ActionTexture = TTGGame.Instance.TextureManager.GetTexture(Graphics.Texture.Report);
+    }
+
+    private void CheckNearbySounds() {
+        if (TTGGame.Instance.Scene is not GameScene scene) return;
+        var viewerPlayer = scene.Players.First();
+        foreach (var player in scene.Players) {
+            if (player.IsDead || viewerPlayer.Equals(player)) continue;
+            var distance = Vector2.Distance(player.Position, viewerPlayer.Position);
+            player._footstepsSound.Volume = MathHelper.Clamp(1f - (distance / MaxVolumeDistance), 0f, MaxFootstepsVolume);
+        }
     }
 
     private void CheckNearbyEntities() {
@@ -125,6 +149,15 @@ public class Player : AnimatedEntity {
         }
     }
 
+    private void StartWalking() {
+        this._footstepsSound.Play();
+    }
+
+    private void StopWalking() {
+        this.SendUpdatedPositionPacket();
+        this._footstepsSound.Stop();
+    }
+
     private void CheckKeyboard() {
         if (KeyboardUtil.IsGoingDown(Keys.Tab)) {
             var nearbyEntities = TTGGame.Instance.NearbyEntities;
@@ -144,9 +177,9 @@ public class Player : AnimatedEntity {
         if (Keyboard.GetState().IsKeyDown(Keys.A)) this.IsFlipped = (this._velocity.X += -Speed) < 0;
         if (Keyboard.GetState().IsKeyDown(Keys.D)) this.IsFlipped = (this._velocity.X += Speed) < 0;
 
-        if (this._velocity.Equals(Vector2.Zero)) {
-            this.StopAnimation(this._character.Idle, this.SendUpdatedPositionPacket);
-        } else this.PlayAnimation();
+        if (this._velocity.Equals(Vector2.Zero))
+            this.StopAnimation(this._character.Idle, this.StopWalking);
+        else this.PlayAnimation(this.StartWalking);
     }
 
     private void DrawSelectedNearbyEntity() {
@@ -176,6 +209,7 @@ public class Player : AnimatedEntity {
         this.Position += _velocity;
         this._velocity = Vector2.Zero;
 
+        this.CheckNearbySounds();
         this.CheckNearbyEntities();
 
         base.Update(gameTime);

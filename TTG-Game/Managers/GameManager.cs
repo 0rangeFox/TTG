@@ -23,6 +23,7 @@ public class GameManager {
     public readonly GraphicManager GraphicManager;
     public SpriteBatch SpriteBatch;
 
+    public readonly AudioManager AudioManager = new();
     public readonly FontManager FontManager = new();
     public readonly TextureManager TextureManager = new();
     public readonly NetworkManager NetworkManager;
@@ -72,6 +73,7 @@ public class GameManager {
         this.SpriteBatch = new SpriteBatch(this.GraphicsDeviceManager.GraphicsDevice);
         this.GraphicManager.Update();
 
+        this.AudioManager.Load();
         this.FontManager.Load();
         this.TextureManager.Load();
 
